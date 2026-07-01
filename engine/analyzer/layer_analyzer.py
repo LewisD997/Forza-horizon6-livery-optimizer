@@ -20,7 +20,7 @@ def analyze_layers(layers, image_info):
     notes = [
         "MVP only reports suspicious layers. It does not rewrite or delete the livery.",
         "The original image is used for basic visual context only in this version.",
-        "Possible fully covered layers are not detected yet because the renderer is still a placeholder.",
+        "Possible fully covered layers are not detected yet because occlusion analysis is not implemented.",
     ]
 
     if image_info.get("edge_density") is not None:

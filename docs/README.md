@@ -11,13 +11,19 @@ This project does not convert images to SVG. It does not refit a whole image fro
 From this folder:
 
 ```bash
-python main.py --image test_data/original.png --input test_data/generated.jsdn --report output/report.json
+python main.py --image test_data/original.png --input test_data/generated.jsdn --report output/report.json --preview output/preview.png
 ```
 
 The report is written to:
 
 ```text
 output/report.json
+```
+
+The preview is written to:
+
+```text
+output/preview.png
 ```
 
 ## MVP Features
@@ -36,6 +42,9 @@ output/report.json
   - nearly identical colors
   - suspicious edge-fixing fragments
   - messy clusters of many small layers in one area
+- Renders a basic PNG preview of the generated layer stack when `--preview` is provided.
+- Preview rendering currently supports approximate rectangle, square, circle, ellipse, triangle, and line primitives.
+- Unknown shape types are drawn as semi-transparent debug bounding boxes and noted in the report.
 
 ## Report Shape
 
@@ -43,6 +52,7 @@ output/report.json
 {
   "total_layers": 0,
   "image_info": {},
+  "preview_path": null,
   "issues": [],
   "suspected_messy_regions": [],
   "estimated_removable_layers": 0,
@@ -55,14 +65,17 @@ output/report.json
 - No UI.
 - No AI.
 - No destructive optimization.
-- No actual renderer output yet.
 - No automatic layer rewriting.
 
 ## Dependencies
 
-The MVP uses only Python standard library modules for the included sample PNG.
+The analyzer can read the included sample PNG with the Python standard library.
 
-If Pillow is installed, FLO will use it for broader image support. Without Pillow, FLO supports simple non-interlaced 8-bit RGB/RGBA PNG files.
+Preview rendering requires Pillow:
+
+```bash
+pip install pillow
+```
 
 ## Unknown `.jsdn` Formats
 

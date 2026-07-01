@@ -8,26 +8,30 @@
     },
     "dominant_colors": [
       {
-        "color": "#f0f0e0",
-        "pixels": 99743
+        "color": "#f5f5ee",
+        "pixels": 9384
       },
       {
-        "color": "#d02020",
-        "pixels": 11277
+        "color": "#c42b2c",
+        "pixels": 1266
       },
       {
-        "color": "#3060c0",
-        "pixels": 6596
+        "color": "#798ebe",
+        "pixels": 943
       },
       {
-        "color": "#101010",
-        "pixels": 2384
+        "color": "#f9faf3",
+        "pixels": 583
+      },
+      {
+        "color": "#f6f5ee",
+        "pixels": 112
       }
     ],
-    "edge_density": 0.0201,
-    "high_detail_regions": [],
-    "reader": "stdlib_png"
+    "edge_density": 0.0884,
+    "high_detail_regions": []
   },
+  "preview_path": "output\\preview.png",
   "issues": [
     {
       "type": "duplicate_layer",
@@ -190,7 +194,7 @@
   "notes": [
     "MVP only reports suspicious layers. It does not rewrite or delete the livery.",
     "The original image is used for basic visual context only in this version.",
-    "Possible fully covered layers are not detected yet because the renderer is still a placeholder.",
-    "Reference image edge density: 0.0201"
+    "Possible fully covered layers are not detected yet because occlusion analysis is not implemented.",
+    "Reference image edge density: 0.0884"
   ]
 }
