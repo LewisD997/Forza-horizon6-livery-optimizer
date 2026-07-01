@@ -9,7 +9,7 @@ Full notes are in [docs/README.md](docs/README.md).
 ## Quick Start
 
 ```bash
-python main.py --image test_data/original.png --input test_data/generated.jsdn --report output/report.json
+python main.py --image test_data/original.png --input test_data/generated.jsdn --report output/report.json --preview output/preview.png --diff output/diff.png
 ```
 
-The first MVP reports problems only. It does not delete, rewrite, or optimize the livery file.
+The current MVP reports problems, renders a preview, generates a visual diff, and uses a local primitive knowledge base for diagnostic suggestions. It does not delete, rewrite, or optimize the livery file.

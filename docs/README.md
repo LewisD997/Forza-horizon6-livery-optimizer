@@ -54,6 +54,7 @@ output/diff.png
 - Compares the original image against the rendered preview when `--diff` is provided.
 - Reports a global visual difference score and high-difference grid regions.
 - Reports simple cleanliness, fragmentation, and layer efficiency scores.
+- Uses a local Forza primitive knowledge base to explain suspicious shape usage and suggest possible replacement primitives.
 
 ## Report Shape
 
@@ -85,6 +86,23 @@ output/diff.png
 - No AI.
 - No destructive optimization.
 - No automatic layer rewriting.
+
+## Primitive Knowledge Base
+
+FLO keeps a local primitive knowledge base at:
+
+```text
+database/forza_primitives.json
+```
+
+It describes common normalized primitives such as rectangle, circle, triangle, line, arc, crescent, trapezoid, polygon, and unknown. Analyzer issues can use this data to add:
+
+- current primitive
+- visual traits
+- possible replacement primitives
+- a plain-language reason
+
+This is only diagnostic. FLO does not rewrite `.jsdn` files yet.
 
 ## Dependencies
 

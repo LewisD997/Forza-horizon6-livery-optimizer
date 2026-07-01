@@ -1,6 +1,8 @@
 from collections import defaultdict
 from math import hypot
 
+from engine.knowledge.primitive_kb import describe_issue_with_primitive
+
 
 def analyze_layers(layers, image_info):
     issues = []
@@ -25,6 +27,8 @@ def analyze_layers(layers, image_info):
 
     if image_info.get("edge_density") is not None:
         notes.append(f"Reference image edge density: {image_info['edge_density']}")
+
+    issues = _enrich_issues_with_primitive_knowledge(issues, layers)
 
     return {
         "issues": issues,
@@ -79,6 +83,22 @@ def _score_from_penalty(penalty):
 
 def _clamp_score(value):
     return round(max(0, min(100, value)), 2)
+
+
+def _enrich_issues_with_primitive_knowledge(issues, layers):
+    layer_by_id = {layer["id"]: layer for layer in layers}
+    enriched = []
+    for issue in issues:
+        layer = layer_by_id.get(issue.get("layer_id"))
+        if not layer:
+            enriched.append(issue)
+            continue
+        issue = {
+            **issue,
+            **describe_issue_with_primitive(layer, issue["type"]),
+        }
+        enriched.append(issue)
+    return enriched
 
 
 def _duplicate_layers(layers):

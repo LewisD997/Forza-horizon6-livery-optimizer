@@ -1,0 +1,169 @@
+{
+  "primitives": [
+    {
+      "id": "rectangle",
+      "display_name": "Rectangle",
+      "category": "basic_filled_shape",
+      "visual_traits": ["straight edges", "flat fill", "strong corners", "easy to stretch"],
+      "best_for": ["blocks of color", "hard shadows", "simple panels", "straight masks"],
+      "bad_for": ["organic curves", "round highlights", "thin edge cleanup when overused"],
+      "replacement_candidates": {
+        "extremely_stretched_layer": ["line", "trapezoid"],
+        "edge_fixing_fragment": ["line", "polygon"],
+        "very_small_layer": ["polygon", "triangle"]
+      },
+      "common_problems": ["over-stretched into fake lines", "stacked as tiny patches", "visible stair-step edges"],
+      "layer_cost": 1,
+      "notes": "Reliable primitive, but messy exports often abuse it as tiny edge repair pieces."
+    },
+    {
+      "id": "square",
+      "display_name": "Square",
+      "category": "basic_filled_shape",
+      "visual_traits": ["equal sides", "hard corners", "stable scale"],
+      "best_for": ["simple pixels", "small blocks", "symmetrical marks"],
+      "bad_for": ["long strokes", "curved forms", "angled panels"],
+      "replacement_candidates": {
+        "very_small_layer": ["rectangle", "polygon"],
+        "messy_cluster": ["polygon", "circle"]
+      },
+      "common_problems": ["used as pixel-like noise", "many small squares create fragmented edges"],
+      "layer_cost": 1,
+      "notes": "Useful sparingly. Many small squares usually indicate fragmentation."
+    },
+    {
+      "id": "circle",
+      "display_name": "Circle",
+      "category": "curved_shape",
+      "visual_traits": ["smooth curve", "radial symmetry", "soft visual footprint"],
+      "best_for": ["round logos", "dots", "wheel-like marks", "soft highlights"],
+      "bad_for": ["long ovals", "sharp corners", "straight edges"],
+      "replacement_candidates": {
+        "extremely_stretched_layer": ["ellipse", "line"],
+        "very_small_layer": ["ellipse", "polygon"]
+      },
+      "common_problems": ["scaled into unintended ellipses", "used as tiny speckles"],
+      "layer_cost": 1,
+      "notes": "Good for clean round forms. If heavily stretched, ellipse is more honest."
+    },
+    {
+      "id": "ellipse",
+      "display_name": "Ellipse",
+      "category": "curved_shape",
+      "visual_traits": ["smooth curve", "directional oval", "good for soft forms"],
+      "best_for": ["highlights", "curved shadows", "oval logos", "smooth patches"],
+      "bad_for": ["sharp geometry", "thin straight lines", "hard corners"],
+      "replacement_candidates": {
+        "extremely_stretched_layer": ["line", "arc"],
+        "edge_fixing_fragment": ["arc", "polygon"]
+      },
+      "common_problems": ["over-stretched into blurry strips", "hard to align with straight edges"],
+      "layer_cost": 1,
+      "notes": "Better than stacked circles for smooth oval forms."
+    },
+    {
+      "id": "triangle",
+      "display_name": "Triangle",
+      "category": "angular_shape",
+      "visual_traits": ["sharp point", "three hard edges", "directional"],
+      "best_for": ["points", "facets", "sharp highlights", "angled cuts"],
+      "bad_for": ["soft curves", "large smooth gradients", "rounded corners"],
+      "replacement_candidates": {
+        "messy_cluster": ["polygon", "trapezoid"],
+        "nearly_identical_colors": ["polygon"]
+      },
+      "common_problems": ["many triangles used to approximate curves", "jagged silhouettes"],
+      "layer_cost": 1,
+      "notes": "Strong hand-drawn primitive for facets, weak when spammed along curves."
+    },
+    {
+      "id": "line",
+      "display_name": "Line",
+      "category": "stroke_shape",
+      "visual_traits": ["thin stroke", "directional", "cheap for long marks"],
+      "best_for": ["pinstripes", "edge accents", "long highlights", "clean straight cuts"],
+      "bad_for": ["filled regions", "wide blocks", "complex curves"],
+      "replacement_candidates": {
+        "extremely_stretched_layer": ["rectangle", "trapezoid"],
+        "edge_fixing_fragment": ["arc", "polygon"]
+      },
+      "common_problems": ["too many short segments", "misused as filled strips"],
+      "layer_cost": 1,
+      "notes": "A line can replace many stretched rectangles when the target is a clean stroke."
+    },
+    {
+      "id": "arc",
+      "display_name": "Arc",
+      "category": "curved_stroke_shape",
+      "visual_traits": ["partial curve", "smooth edge", "directional curve"],
+      "best_for": ["curved outlines", "rounded edge cleanup", "wheel arches", "partial rings"],
+      "bad_for": ["filled areas", "sharp corners", "straight accents"],
+      "replacement_candidates": {
+        "edge_fixing_fragment": ["ellipse", "polygon"],
+        "messy_cluster": ["ellipse", "crescent"]
+      },
+      "common_problems": ["wrong radius", "overlapping arcs create uneven thickness"],
+      "layer_cost": 1,
+      "notes": "Useful future primitive for replacing clusters of curved edge fragments."
+    },
+    {
+      "id": "crescent",
+      "display_name": "Crescent",
+      "category": "compound_curved_shape",
+      "visual_traits": ["curved cutout", "asymmetric", "moon-like negative space"],
+      "best_for": ["curved highlights", "stylized cuts", "logo swooshes"],
+      "bad_for": ["straight panels", "small speckles", "precise angular corners"],
+      "replacement_candidates": {
+        "messy_cluster": ["arc", "ellipse", "polygon"],
+        "edge_fixing_fragment": ["arc"]
+      },
+      "common_problems": ["hard to tune", "may need masking", "can look generic if overused"],
+      "layer_cost": 1,
+      "notes": "Potentially strong replacement for many small curve fragments."
+    },
+    {
+      "id": "trapezoid",
+      "display_name": "Trapezoid",
+      "category": "angular_shape",
+      "visual_traits": ["four sides", "angled edges", "panel-like"],
+      "best_for": ["slanted panels", "tapered highlights", "perspective blocks"],
+      "bad_for": ["round forms", "tiny patches", "soft gradients"],
+      "replacement_candidates": {
+        "extremely_stretched_layer": ["line", "rectangle"],
+        "messy_cluster": ["polygon", "triangle"]
+      },
+      "common_problems": ["used where a polygon would be cleaner", "overlapping panels create seams"],
+      "layer_cost": 1,
+      "notes": "Good middle ground between rectangle and free polygon."
+    },
+    {
+      "id": "polygon",
+      "display_name": "Polygon",
+      "category": "flexible_shape",
+      "visual_traits": ["custom outline", "multiple hard edges", "high control"],
+      "best_for": ["clean silhouettes", "combined patches", "hand-drawn simplified regions"],
+      "bad_for": ["perfect circles", "tiny repeated noise", "soft curves without enough points"],
+      "replacement_candidates": {
+        "messy_cluster": ["trapezoid", "triangle", "arc"],
+        "edge_fixing_fragment": ["line", "arc"]
+      },
+      "common_problems": ["too many points", "can become another form of fragmentation"],
+      "layer_cost": 1,
+      "notes": "Best candidate for collapsing several tiny generated pieces into one cleaner hand-shaped region."
+    },
+    {
+      "id": "unknown",
+      "display_name": "Unknown Primitive",
+      "category": "debug",
+      "visual_traits": ["unclassified", "needs inspection"],
+      "best_for": ["debugging parser coverage"],
+      "bad_for": ["confident optimization decisions"],
+      "replacement_candidates": {
+        "unknown_shape": ["rectangle", "ellipse", "polygon"]
+      },
+      "common_problems": ["parser may not understand this generated shape yet"],
+      "layer_cost": 1,
+      "notes": "Fallback entry. Improve parser mapping before making optimization decisions."
+    }
+  ]
+}
