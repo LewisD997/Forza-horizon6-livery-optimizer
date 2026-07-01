@@ -86,6 +86,604 @@
     "layer_efficiency_score": 40.45
   },
   "unknown_primitives": [],
+  "optimization_suggestions": [
+    {
+      "suggestion_id": "suggestion_0001",
+      "priority": "high",
+      "mode": "safe",
+      "region": {
+        "x": 90.0,
+        "y": 60.0,
+        "width": 120.0,
+        "height": 120.0
+      },
+      "problem_type": "duplicate_layer",
+      "current_layers": [
+        "base_circle_duplicate",
+        "base_circle"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Remove the duplicate layer if it has no intentional stacking effect.",
+      "suggested_primitives": [],
+      "estimated_layer_saving": 1,
+      "risk": "low",
+      "reason": "This primitive appears redundant at the same position, size, color, and rotation.",
+      "primitive_reason": "This primitive appears redundant at the same position, size, color, and rotation."
+    },
+    {
+      "suggestion_id": "suggestion_0002",
+      "priority": "medium",
+      "mode": "safe",
+      "region": {
+        "x": 300.0,
+        "y": 180.0,
+        "width": 3.0,
+        "height": 3.0
+      },
+      "problem_type": "tiny_invisible_detail",
+      "current_layers": [
+        "micro_1"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Review whether this tiny layer is visible enough to justify its cost.",
+      "suggested_primitives": [
+        "ellipse",
+        "polygon"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "low",
+      "reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation.",
+      "primitive_reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
+    },
+    {
+      "suggestion_id": "suggestion_0003",
+      "priority": "medium",
+      "mode": "safe",
+      "region": {
+        "x": 306.0,
+        "y": 184.0,
+        "width": 4.0,
+        "height": 3.0
+      },
+      "problem_type": "tiny_invisible_detail",
+      "current_layers": [
+        "micro_2"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Review whether this tiny layer is visible enough to justify its cost.",
+      "suggested_primitives": [
+        "ellipse",
+        "polygon"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "low",
+      "reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation.",
+      "primitive_reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
+    },
+    {
+      "suggestion_id": "suggestion_0004",
+      "priority": "medium",
+      "mode": "safe",
+      "region": {
+        "x": 312.0,
+        "y": 178.0,
+        "width": 4.0,
+        "height": 4.0
+      },
+      "problem_type": "tiny_invisible_detail",
+      "current_layers": [
+        "micro_3"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Review whether this tiny layer is visible enough to justify its cost.",
+      "suggested_primitives": [
+        "ellipse",
+        "polygon"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "low",
+      "reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation.",
+      "primitive_reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
+    },
+    {
+      "suggestion_id": "suggestion_0005",
+      "priority": "medium",
+      "mode": "safe",
+      "region": {
+        "x": 318.0,
+        "y": 187.0,
+        "width": 3.0,
+        "height": 4.0
+      },
+      "problem_type": "tiny_invisible_detail",
+      "current_layers": [
+        "micro_4"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Review whether this tiny layer is visible enough to justify its cost.",
+      "suggested_primitives": [
+        "ellipse",
+        "polygon"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "low",
+      "reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation.",
+      "primitive_reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
+    },
+    {
+      "suggestion_id": "suggestion_0006",
+      "priority": "medium",
+      "mode": "safe",
+      "region": {
+        "x": 324.0,
+        "y": 181.0,
+        "width": 4.0,
+        "height": 4.0
+      },
+      "problem_type": "tiny_invisible_detail",
+      "current_layers": [
+        "micro_5"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Review whether this tiny layer is visible enough to justify its cost.",
+      "suggested_primitives": [
+        "ellipse",
+        "polygon"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "low",
+      "reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation.",
+      "primitive_reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
+    },
+    {
+      "suggestion_id": "suggestion_0007",
+      "priority": "medium",
+      "mode": "smart",
+      "region": {
+        "x": 300.0,
+        "y": 178.0,
+        "width": 28.0,
+        "height": 13.0
+      },
+      "problem_type": "overused_round_shapes",
+      "current_layers": [
+        "micro_1",
+        "micro_2",
+        "micro_3",
+        "micro_4",
+        "micro_5"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Review repeated tiny round primitives and merge them into cleaner hand-shaped patches where possible.",
+      "suggested_primitives": [
+        "polygon",
+        "ellipse"
+      ],
+      "estimated_layer_saving": 3,
+      "risk": "medium",
+      "reason": "Many small round shapes in one livery often read as generated noise rather than intentional hand-drawn detail.",
+      "primitive_reason": "Round detail primitives are useful, but repeated tiny round patches can look noisy instead of hand drawn."
+    },
+    {
+      "suggestion_id": "suggestion_0008",
+      "priority": "medium",
+      "mode": "smart",
+      "region": {
+        "x": 180.0,
+        "y": 70.0,
+        "width": 86.0,
+        "height": 40.0
+      },
+      "problem_type": "near_identical_colors",
+      "current_layers": [
+        "near_color_a",
+        "near_color_b"
+      ],
+      "current_primitives": [
+        "triangle"
+      ],
+      "primitive_traits": [
+        "directional",
+        "fill",
+        "hard_edge",
+        "sharp point",
+        "three hard edges"
+      ],
+      "suggested_action": "Merge near-identical color decisions where they do not change the silhouette.",
+      "suggested_primitives": [
+        "polygon"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "medium",
+      "reason": "Nearby color variants may be mergeable into a simpler color decision.",
+      "primitive_reason": "Nearby color variants may be mergeable into a simpler color decision."
+    },
+    {
+      "suggestion_id": "suggestion_0009",
+      "priority": "medium",
+      "mode": "smart",
+      "region": {
+        "x": 300.0,
+        "y": 180.0,
+        "width": 10.0,
+        "height": 7.0
+      },
+      "problem_type": "near_identical_colors",
+      "current_layers": [
+        "micro_1",
+        "micro_2"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Merge near-identical color decisions where they do not change the silhouette.",
+      "suggested_primitives": [
+        "polygon"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "medium",
+      "reason": "Nearby color variants may be mergeable into a simpler color decision.",
+      "primitive_reason": "Nearby color variants may be mergeable into a simpler color decision."
+    },
+    {
+      "suggestion_id": "suggestion_0010",
+      "priority": "medium",
+      "mode": "smart",
+      "region": {
+        "x": 306.0,
+        "y": 184.0,
+        "width": 15.0,
+        "height": 7.0
+      },
+      "problem_type": "near_identical_colors",
+      "current_layers": [
+        "micro_2",
+        "micro_4"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Merge near-identical color decisions where they do not change the silhouette.",
+      "suggested_primitives": [
+        "polygon"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "medium",
+      "reason": "Nearby color variants may be mergeable into a simpler color decision.",
+      "primitive_reason": "Nearby color variants may be mergeable into a simpler color decision."
+    },
+    {
+      "suggestion_id": "suggestion_0011",
+      "priority": "medium",
+      "mode": "smart",
+      "region": {
+        "x": 312.0,
+        "y": 178.0,
+        "width": 16.0,
+        "height": 7.0
+      },
+      "problem_type": "near_identical_colors",
+      "current_layers": [
+        "micro_3",
+        "micro_5"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Merge near-identical color decisions where they do not change the silhouette.",
+      "suggested_primitives": [
+        "polygon"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "medium",
+      "reason": "Nearby color variants may be mergeable into a simpler color decision.",
+      "primitive_reason": "Nearby color variants may be mergeable into a simpler color decision."
+    },
+    {
+      "suggestion_id": "suggestion_0012",
+      "priority": "medium",
+      "mode": "smart",
+      "region": {
+        "x": 318.0,
+        "y": 181.0,
+        "width": 10.0,
+        "height": 10.0
+      },
+      "problem_type": "near_identical_colors",
+      "current_layers": [
+        "micro_4",
+        "micro_5"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Merge near-identical color decisions where they do not change the silhouette.",
+      "suggested_primitives": [
+        "polygon"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "medium",
+      "reason": "Nearby color variants may be mergeable into a simpler color decision.",
+      "primitive_reason": "Nearby color variants may be mergeable into a simpler color decision."
+    },
+    {
+      "suggestion_id": "suggestion_0013",
+      "priority": "medium",
+      "mode": "smart",
+      "region": {
+        "x": 2.0,
+        "y": 4.0,
+        "width": 160.0,
+        "height": 2.0
+      },
+      "problem_type": "extreme_stretch",
+      "current_layers": [
+        "long_edge_patch"
+      ],
+      "current_primitives": [
+        "rectangle"
+      ],
+      "primitive_traits": [
+        "easy to stretch",
+        "fill",
+        "flat fill",
+        "large_block",
+        "straight edges",
+        "strong corners"
+      ],
+      "suggested_action": "Replace the stretched primitive with a cleaner line, trapezoid primitive.",
+      "suggested_primitives": [
+        "line",
+        "trapezoid"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "medium",
+      "reason": "Rectangle is highly stretched; a stroke-like or tapered primitive may be cleaner.",
+      "primitive_reason": "Rectangle is highly stretched; a stroke-like or tapered primitive may be cleaner."
+    },
+    {
+      "suggestion_id": "suggestion_0014",
+      "priority": "medium",
+      "mode": "smart",
+      "region": {
+        "x": 60.0,
+        "y": 220.0,
+        "width": 180.0,
+        "height": 6.0
+      },
+      "problem_type": "extreme_stretch",
+      "current_layers": [
+        "thin_stretched_highlight"
+      ],
+      "current_primitives": [
+        "rectangle"
+      ],
+      "primitive_traits": [
+        "easy to stretch",
+        "fill",
+        "flat fill",
+        "large_block",
+        "straight edges",
+        "strong corners"
+      ],
+      "suggested_action": "Replace the stretched primitive with a cleaner line, trapezoid primitive.",
+      "suggested_primitives": [
+        "line",
+        "trapezoid"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "medium",
+      "reason": "Rectangle is highly stretched; a stroke-like or tapered primitive may be cleaner.",
+      "primitive_reason": "Rectangle is highly stretched; a stroke-like or tapered primitive may be cleaner."
+    },
+    {
+      "suggestion_id": "suggestion_0015",
+      "priority": "medium",
+      "mode": "reconstruction",
+      "region": {
+        "x": 280,
+        "y": 120,
+        "width": 40,
+        "height": 40
+      },
+      "problem_type": "high_visual_difference_region",
+      "current_layers": [
+        "micro_1",
+        "micro_2",
+        "micro_3",
+        "micro_4",
+        "micro_5"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Locally reconstruct this high-difference region with fewer cleaner primitives instead of refitting the full image.",
+      "suggested_primitives": [
+        "polygon"
+      ],
+      "estimated_layer_saving": 4,
+      "risk": "high",
+      "reason": "Visual diff score 0.2337 overlaps several nearby generated layers, which suggests a local reconstruction candidate.",
+      "primitive_reason": "The current primitive mix does not match the reference well in this local region."
+    },
+    {
+      "suggestion_id": "suggestion_0016",
+      "priority": "medium",
+      "mode": "reconstruction",
+      "region": {
+        "x": 300.0,
+        "y": 178.0,
+        "width": 28.0,
+        "height": 13.0
+      },
+      "problem_type": "excessive_small_fragments",
+      "current_layers": [
+        "micro_1",
+        "micro_2",
+        "micro_3",
+        "micro_4",
+        "micro_5"
+      ],
+      "current_primitives": [
+        "circle"
+      ],
+      "primitive_traits": [
+        "fill",
+        "radial symmetry",
+        "smooth curve",
+        "soft visual footprint",
+        "soft_curve"
+      ],
+      "suggested_action": "Collapse this dense cluster of tiny layers into one or two cleaner hand-shaped primitives.",
+      "suggested_primitives": [
+        "polygon"
+      ],
+      "estimated_layer_saving": 3,
+      "risk": "high",
+      "reason": "A dense group of tiny generated layers usually indicates fragmented local construction that can be cleaner as a larger intentional shape.",
+      "primitive_reason": "Small detail primitives are being used as fragments; a larger fill primitive can often preserve meaning with fewer layers."
+    },
+    {
+      "suggestion_id": "suggestion_0017",
+      "priority": "medium",
+      "mode": "reconstruction",
+      "region": {
+        "x": 2.0,
+        "y": 4.0,
+        "width": 160.0,
+        "height": 2.0
+      },
+      "problem_type": "possible_line_replacement",
+      "current_layers": [
+        "long_edge_patch"
+      ],
+      "current_primitives": [
+        "rectangle"
+      ],
+      "primitive_traits": [
+        "easy to stretch",
+        "fill",
+        "flat fill",
+        "large_block",
+        "straight edges",
+        "strong corners"
+      ],
+      "suggested_action": "Replace edge-fixing fragments with a cleaner stroke or single edge primitive.",
+      "suggested_primitives": [
+        "line",
+        "polygon"
+      ],
+      "estimated_layer_saving": 1,
+      "risk": "high",
+      "reason": "Rectangle is acting like edge cleanup; a line, arc, or polygon may express the edge more cleanly.",
+      "primitive_reason": "Rectangle is acting like edge cleanup; a line, arc, or polygon may express the edge more cleanly."
+    }
+  ],
+  "suggestion_summary": {
+    "total_suggestions": 17,
+    "safe": 6,
+    "smart": 8,
+    "reconstruction": 3,
+    "estimated_total_layer_saving": 24
+  },
   "issues": [
     {
       "type": "duplicate_layer",

@@ -11,7 +11,7 @@ This project does not convert images to SVG. It does not refit a whole image fro
 From this folder:
 
 ```bash
-python main.py --image test_data/original.png --input test_data/generated.jsdn --report output/report.json --preview output/preview.png --diff output/diff.png
+python main.py --image test_data/original.png --input test_data/generated.jsdn --report output/report.json --preview output/preview.png --diff output/diff.png --log-training-cases
 ```
 
 The report is written to:
@@ -30,6 +30,12 @@ The visual diff is written to:
 
 ```text
 output/diff.png
+```
+
+Pending training cases are appended to:
+
+```text
+database/training_cases.jsonl
 ```
 
 ## MVP Features
@@ -55,6 +61,8 @@ output/diff.png
 - Reports a global visual difference score and high-difference grid regions.
 - Reports simple cleanliness, fragmentation, and layer efficiency scores.
 - Uses a local Forza primitive knowledge base to explain suspicious shape usage and suggest possible replacement primitives.
+- Generates ranked optimization suggestions without modifying `.jsdn`.
+- Can log pending suggestion cases for later human review.
 
 ## Report Shape
 
@@ -74,6 +82,14 @@ output/diff.png
     "layer_efficiency_score": 0
   },
   "unknown_primitives": [],
+  "optimization_suggestions": [],
+  "suggestion_summary": {
+    "total_suggestions": 0,
+    "safe": 0,
+    "smart": 0,
+    "reconstruction": 0,
+    "estimated_total_layer_saving": 0
+  },
   "issues": [],
   "suspected_messy_regions": [],
   "estimated_removable_layers": 0,
@@ -106,6 +122,26 @@ It describes common normalized primitives such as rectangle, circle, triangle, l
 Shapes not found in the knowledge base are listed in `unknown_primitives` in the report.
 
 This is only diagnostic. FLO does not rewrite `.jsdn` files yet.
+
+## Optimization Suggestions
+
+FLO can generate ranked suggestions in three modes:
+
+- `safe`: likely removable or redundant layers, such as duplicates or tiny invisible details.
+- `smart`: primitive substitutions or cleanup ideas, such as line replacement, arc replacement, or near-identical color merges.
+- `reconstruction`: local rebuild candidates for messy clusters or high-difference regions.
+
+Suggestions are advisory only. FLO does not automatically edit the livery file.
+
+## Training Cases
+
+Use `--log-training-cases` to append pending review cases to:
+
+```text
+database/training_cases.jsonl
+```
+
+Each case starts with `user_decision` set to `pending`.
 
 ## Dependencies
 

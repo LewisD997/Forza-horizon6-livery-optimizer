@@ -3,8 +3,13 @@ import sys
 from pathlib import Path
 
 from engine.analyzer.layer_analyzer import analyze_layers, score_layers
+from engine.optimizer.suggestion_engine import (
+    generate_optimization_suggestions,
+    summarize_suggestions,
+)
 from engine.parser.jsdn_parser import JsdnParseError, parse_jsdn
 from engine.renderer.preview_renderer import PreviewRenderError, render_preview
+from engine.reports.training_case_logger import write_training_cases
 from engine.reports.report_writer import write_report
 from engine.knowledge.primitive_kb import is_known_primitive
 from engine.vision.image_inspector import inspect_reference_image
@@ -30,6 +35,12 @@ def build_report(image_path, input_path, preview_path=None, diff_path=None):
             raise ValueError("--diff requires --preview so FLO has a rendered livery image to compare.")
         visual_diff = compare_images(image_path, rendered_preview_path, diff_path)
 
+    suggestions = generate_optimization_suggestions(
+        layers,
+        analysis["issues"],
+        visual_diff=visual_diff,
+    )
+
     return {
         "total_layers": len(layers),
         "image_info": image_info,
@@ -37,6 +48,8 @@ def build_report(image_path, input_path, preview_path=None, diff_path=None):
         "visual_diff": visual_diff,
         "scores": scores,
         "unknown_primitives": _unknown_primitives(layers),
+        "optimization_suggestions": suggestions,
+        "suggestion_summary": summarize_suggestions(suggestions),
         "issues": analysis["issues"],
         "suspected_messy_regions": analysis["suspected_messy_regions"],
         "estimated_removable_layers": analysis["estimated_removable_layers"],
@@ -64,6 +77,11 @@ def main():
     parser.add_argument("--report", required=True, help="Path to the JSON report output.")
     parser.add_argument("--preview", help="Optional path to write a rendered PNG preview.")
     parser.add_argument("--diff", help="Optional path to write a PNG visual diff.")
+    parser.add_argument(
+        "--log-training-cases",
+        action="store_true",
+        help="Write pending suggestion cases to database/training_cases.jsonl.",
+    )
     args = parser.parse_args()
 
     image_path = Path(args.image)
@@ -84,6 +102,13 @@ def main():
         print(f"Preview written to {preview_path}")
     if diff_path:
         print(f"Diff written to {diff_path}")
+    if args.log_training_cases:
+        case_path = write_training_cases(
+            image_path,
+            input_path,
+            report["optimization_suggestions"],
+        )
+        print(f"Training cases written to {case_path}")
     return 0
 
 
