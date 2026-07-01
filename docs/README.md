@@ -73,6 +73,7 @@ output/diff.png
     "fragmentation_score": 0,
     "layer_efficiency_score": 0
   },
+  "unknown_primitives": [],
   "issues": [],
   "suspected_messy_regions": [],
   "estimated_removable_layers": 0,
@@ -100,7 +101,9 @@ It describes common normalized primitives such as rectangle, circle, triangle, l
 - current primitive
 - visual traits
 - possible replacement primitives
-- a plain-language reason
+- a plain-language primitive reason
+
+Shapes not found in the knowledge base are listed in `unknown_primitives` in the report.
 
 This is only diagnostic. FLO does not rewrite `.jsdn` files yet.
 

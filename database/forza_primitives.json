@@ -3,13 +3,17 @@
     {
       "id": "rectangle",
       "display_name": "Rectangle",
-      "category": "basic_filled_shape",
-      "visual_traits": ["straight edges", "flat fill", "strong corners", "easy to stretch"],
+      "category": "hard_edge",
+      "visual_traits": ["fill", "large_block", "straight edges", "flat fill", "strong corners", "easy to stretch"],
       "best_for": ["blocks of color", "hard shadows", "simple panels", "straight masks"],
       "bad_for": ["organic curves", "round highlights", "thin edge cleanup when overused"],
       "replacement_candidates": {
+        "extreme_stretch": ["line", "trapezoid"],
         "extremely_stretched_layer": ["line", "trapezoid"],
         "edge_fixing_fragment": ["line", "polygon"],
+        "soft_edge_on_sharp_boundary": ["polygon", "trapezoid"],
+        "possible_line_replacement": ["line"],
+        "tiny_invisible_detail": ["polygon", "triangle"],
         "very_small_layer": ["polygon", "triangle"]
       },
       "common_problems": ["over-stretched into fake lines", "stacked as tiny patches", "visible stair-step edges"],
@@ -19,12 +23,14 @@
     {
       "id": "square",
       "display_name": "Square",
-      "category": "basic_filled_shape",
-      "visual_traits": ["equal sides", "hard corners", "stable scale"],
+      "category": "small_detail",
+      "visual_traits": ["hard_edge", "fill", "equal sides", "hard corners", "stable scale"],
       "best_for": ["simple pixels", "small blocks", "symmetrical marks"],
       "bad_for": ["long strokes", "curved forms", "angled panels"],
       "replacement_candidates": {
+        "tiny_invisible_detail": ["rectangle", "polygon"],
         "very_small_layer": ["rectangle", "polygon"],
+        "excessive_small_fragments": ["polygon", "circle"],
         "messy_cluster": ["polygon", "circle"]
       },
       "common_problems": ["used as pixel-like noise", "many small squares create fragmented edges"],
@@ -34,13 +40,16 @@
     {
       "id": "circle",
       "display_name": "Circle",
-      "category": "curved_shape",
-      "visual_traits": ["smooth curve", "radial symmetry", "soft visual footprint"],
+      "category": "round_detail",
+      "visual_traits": ["soft_curve", "fill", "smooth curve", "radial symmetry", "soft visual footprint"],
       "best_for": ["round logos", "dots", "wheel-like marks", "soft highlights"],
       "bad_for": ["long ovals", "sharp corners", "straight edges"],
       "replacement_candidates": {
+        "extreme_stretch": ["ellipse", "line"],
         "extremely_stretched_layer": ["ellipse", "line"],
-        "very_small_layer": ["ellipse", "polygon"]
+        "tiny_invisible_detail": ["ellipse", "polygon"],
+        "very_small_layer": ["ellipse", "polygon"],
+        "overused_round_shapes": ["ellipse", "polygon"]
       },
       "common_problems": ["scaled into unintended ellipses", "used as tiny speckles"],
       "layer_cost": 1,
@@ -49,13 +58,16 @@
     {
       "id": "ellipse",
       "display_name": "Ellipse",
-      "category": "curved_shape",
-      "visual_traits": ["smooth curve", "directional oval", "good for soft forms"],
+      "category": "soft_curve",
+      "visual_traits": ["fill", "round_detail", "smooth curve", "directional oval", "good for soft forms"],
       "best_for": ["highlights", "curved shadows", "oval logos", "smooth patches"],
       "bad_for": ["sharp geometry", "thin straight lines", "hard corners"],
       "replacement_candidates": {
+        "extreme_stretch": ["line", "arc"],
         "extremely_stretched_layer": ["line", "arc"],
         "edge_fixing_fragment": ["arc", "polygon"]
+        ,"muddy_curve": ["arc", "crescent"],
+        "possible_arc_replacement": ["arc"]
       },
       "common_problems": ["over-stretched into blurry strips", "hard to align with straight edges"],
       "layer_cost": 1,
@@ -64,11 +76,12 @@
     {
       "id": "triangle",
       "display_name": "Triangle",
-      "category": "angular_shape",
-      "visual_traits": ["sharp point", "three hard edges", "directional"],
+      "category": "sharp_tip",
+      "visual_traits": ["hard_edge", "fill", "sharp point", "three hard edges", "directional"],
       "best_for": ["points", "facets", "sharp highlights", "angled cuts"],
       "bad_for": ["soft curves", "large smooth gradients", "rounded corners"],
       "replacement_candidates": {
+        "excessive_small_fragments": ["polygon", "trapezoid"],
         "messy_cluster": ["polygon", "trapezoid"],
         "nearly_identical_colors": ["polygon"]
       },
@@ -79,13 +92,16 @@
     {
       "id": "line",
       "display_name": "Line",
-      "category": "stroke_shape",
-      "visual_traits": ["thin stroke", "directional", "cheap for long marks"],
+      "category": "stroke",
+      "visual_traits": ["hard_edge", "thin stroke", "directional", "cheap for long marks"],
       "best_for": ["pinstripes", "edge accents", "long highlights", "clean straight cuts"],
       "bad_for": ["filled regions", "wide blocks", "complex curves"],
       "replacement_candidates": {
+        "extreme_stretch": ["rectangle", "trapezoid"],
         "extremely_stretched_layer": ["rectangle", "trapezoid"],
-        "edge_fixing_fragment": ["arc", "polygon"]
+        "edge_fixing_fragment": ["arc", "polygon"],
+        "possible_arc_replacement": ["arc"],
+        "possible_line_replacement": ["line"]
       },
       "common_problems": ["too many short segments", "misused as filled strips"],
       "layer_cost": 1,
@@ -94,12 +110,14 @@
     {
       "id": "arc",
       "display_name": "Arc",
-      "category": "curved_stroke_shape",
-      "visual_traits": ["partial curve", "smooth edge", "directional curve"],
+      "category": "stroke",
+      "visual_traits": ["soft_curve", "partial curve", "smooth edge", "directional curve"],
       "best_for": ["curved outlines", "rounded edge cleanup", "wheel arches", "partial rings"],
       "bad_for": ["filled areas", "sharp corners", "straight accents"],
       "replacement_candidates": {
         "edge_fixing_fragment": ["ellipse", "polygon"],
+        "muddy_curve": ["ellipse", "crescent"],
+        "possible_arc_replacement": ["arc"],
         "messy_cluster": ["ellipse", "crescent"]
       },
       "common_problems": ["wrong radius", "overlapping arcs create uneven thickness"],
@@ -109,13 +127,15 @@
     {
       "id": "crescent",
       "display_name": "Crescent",
-      "category": "compound_curved_shape",
-      "visual_traits": ["curved cutout", "asymmetric", "moon-like negative space"],
+      "category": "soft_curve",
+      "visual_traits": ["round_detail", "curved cutout", "asymmetric", "moon-like negative space"],
       "best_for": ["curved highlights", "stylized cuts", "logo swooshes"],
       "bad_for": ["straight panels", "small speckles", "precise angular corners"],
       "replacement_candidates": {
+        "muddy_curve": ["arc", "ellipse", "polygon"],
         "messy_cluster": ["arc", "ellipse", "polygon"],
-        "edge_fixing_fragment": ["arc"]
+        "edge_fixing_fragment": ["arc"],
+        "possible_arc_replacement": ["arc"]
       },
       "common_problems": ["hard to tune", "may need masking", "can look generic if overused"],
       "layer_cost": 1,
@@ -124,13 +144,16 @@
     {
       "id": "trapezoid",
       "display_name": "Trapezoid",
-      "category": "angular_shape",
-      "visual_traits": ["four sides", "angled edges", "panel-like"],
+      "category": "hard_edge",
+      "visual_traits": ["fill", "large_block", "four sides", "angled edges", "panel-like"],
       "best_for": ["slanted panels", "tapered highlights", "perspective blocks"],
       "bad_for": ["round forms", "tiny patches", "soft gradients"],
       "replacement_candidates": {
+        "extreme_stretch": ["line", "rectangle"],
         "extremely_stretched_layer": ["line", "rectangle"],
-        "messy_cluster": ["polygon", "triangle"]
+        "excessive_small_fragments": ["polygon", "triangle"],
+        "messy_cluster": ["polygon", "triangle"],
+        "possible_line_replacement": ["line"]
       },
       "common_problems": ["used where a polygon would be cleaner", "overlapping panels create seams"],
       "layer_cost": 1,
@@ -139,13 +162,17 @@
     {
       "id": "polygon",
       "display_name": "Polygon",
-      "category": "flexible_shape",
-      "visual_traits": ["custom outline", "multiple hard edges", "high control"],
+      "category": "hard_edge",
+      "visual_traits": ["fill", "large_block", "custom outline", "multiple hard edges", "high control"],
       "best_for": ["clean silhouettes", "combined patches", "hand-drawn simplified regions"],
       "bad_for": ["perfect circles", "tiny repeated noise", "soft curves without enough points"],
       "replacement_candidates": {
+        "excessive_small_fragments": ["trapezoid", "triangle", "arc"],
         "messy_cluster": ["trapezoid", "triangle", "arc"],
-        "edge_fixing_fragment": ["line", "arc"]
+        "edge_fixing_fragment": ["line", "arc"],
+        "soft_edge_on_sharp_boundary": ["trapezoid", "triangle"],
+        "possible_line_replacement": ["line"],
+        "possible_arc_replacement": ["arc"]
       },
       "common_problems": ["too many points", "can become another form of fragmentation"],
       "layer_cost": 1,
@@ -154,12 +181,20 @@
     {
       "id": "unknown",
       "display_name": "Unknown Primitive",
-      "category": "debug",
+      "category": "unknown",
       "visual_traits": ["unclassified", "needs inspection"],
       "best_for": ["debugging parser coverage"],
       "bad_for": ["confident optimization decisions"],
       "replacement_candidates": {
-        "unknown_shape": ["rectangle", "ellipse", "polygon"]
+        "unknown_shape": ["rectangle", "ellipse", "polygon"],
+        "soft_edge_on_sharp_boundary": ["polygon"],
+        "excessive_small_fragments": ["polygon"],
+        "extreme_stretch": ["line"],
+        "tiny_invisible_detail": ["polygon"],
+        "muddy_curve": ["arc"],
+        "overused_round_shapes": ["polygon"],
+        "possible_line_replacement": ["line"],
+        "possible_arc_replacement": ["arc"]
       },
       "common_problems": ["parser may not understand this generated shape yet"],
       "layer_cost": 1,

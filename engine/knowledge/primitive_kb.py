@@ -3,12 +3,16 @@ from functools import lru_cache
 from pathlib import Path
 
 
-KB_PATH = Path(__file__).resolve().parents[2] / "database" / "forza_primitives.json"
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_KB_PATH = "database/forza_primitives.json"
 
 
 @lru_cache(maxsize=1)
-def load_primitive_kb():
-    data = json.loads(KB_PATH.read_text(encoding="utf-8"))
+def load_primitive_kb(path=DEFAULT_KB_PATH):
+    kb_path = Path(path)
+    if not kb_path.is_absolute():
+        kb_path = PROJECT_ROOT / kb_path
+    data = json.loads(kb_path.read_text(encoding="utf-8"))
     return {entry["id"]: entry for entry in data.get("primitives", [])}
 
 
@@ -18,22 +22,30 @@ def get_primitive_info(shape_id):
     return kb.get(normalized_id, kb["unknown"])
 
 
+def is_known_primitive(shape_id):
+    kb = load_primitive_kb()
+    return _normalize_shape_id(shape_id) in kb
+
+
 def suggest_replacements(shape_id, problem_type):
     primitive = get_primitive_info(shape_id)
     candidates = primitive.get("replacement_candidates", {})
+    normalized_problem = _normalize_problem_type(problem_type)
     if problem_type in candidates:
         return candidates[problem_type]
+    if normalized_problem in candidates:
+        return candidates[normalized_problem]
     if problem_type == "duplicate_layer":
         return []
     if problem_type == "nearly_identical_colors":
         return candidates.get("nearly_identical_colors", ["polygon"])
     if problem_type == "very_small_layer":
-        return candidates.get("very_small_layer", ["polygon"])
+        return candidates.get("tiny_invisible_detail", candidates.get("very_small_layer", ["polygon"]))
     if problem_type == "edge_fixing_fragment":
         return candidates.get("edge_fixing_fragment", ["line", "arc"])
     if problem_type == "extremely_stretched_layer":
-        return candidates.get("extremely_stretched_layer", ["line"])
-    return candidates.get(problem_type, [])
+        return candidates.get("extreme_stretch", candidates.get("extremely_stretched_layer", ["line"]))
+    return candidates.get(problem_type, candidates.get(normalized_problem, []))
 
 
 def classify_primitive_usage(layer):
@@ -69,7 +81,7 @@ def describe_issue_with_primitive(layer, problem_type):
         "current_primitive": primitive["id"],
         "primitive_traits": primitive["visual_traits"],
         "possible_replacements": replacements,
-        "reason": _reason(layer, primitive, usage, problem_type),
+        "primitive_reason": _reason(layer, primitive, usage, problem_type),
     }
 
 
@@ -93,3 +105,13 @@ def _normalize_shape_id(shape_id):
     if not shape_id:
         return "unknown"
     return str(shape_id).strip().lower().replace(" ", "_")
+
+
+def _normalize_problem_type(problem_type):
+    mapping = {
+        "very_small_layer": "tiny_invisible_detail",
+        "extremely_stretched_layer": "extreme_stretch",
+        "edge_fixing_fragment": "possible_line_replacement",
+        "messy_small_layer_cluster": "excessive_small_fragments",
+    }
+    return mapping.get(problem_type, problem_type)

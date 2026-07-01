@@ -85,6 +85,7 @@
     "fragmentation_score": 67,
     "layer_efficiency_score": 40.45
   },
+  "unknown_primitives": [],
   "issues": [
     {
       "type": "duplicate_layer",
@@ -97,12 +98,14 @@
       ],
       "current_primitive": "circle",
       "primitive_traits": [
+        "soft_curve",
+        "fill",
         "smooth curve",
         "radial symmetry",
         "soft visual footprint"
       ],
       "possible_replacements": [],
-      "reason": "This primitive appears redundant at the same position, size, color, and rotation."
+      "primitive_reason": "This primitive appears redundant at the same position, size, color, and rotation."
     },
     {
       "type": "very_small_layer",
@@ -112,6 +115,8 @@
       "area": 9.0,
       "current_primitive": "circle",
       "primitive_traits": [
+        "soft_curve",
+        "fill",
         "smooth curve",
         "radial symmetry",
         "soft visual footprint"
@@ -120,7 +125,7 @@
         "ellipse",
         "polygon"
       ],
-      "reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
+      "primitive_reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
     },
     {
       "type": "very_small_layer",
@@ -130,6 +135,8 @@
       "area": 12.0,
       "current_primitive": "circle",
       "primitive_traits": [
+        "soft_curve",
+        "fill",
         "smooth curve",
         "radial symmetry",
         "soft visual footprint"
@@ -138,7 +145,7 @@
         "ellipse",
         "polygon"
       ],
-      "reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
+      "primitive_reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
     },
     {
       "type": "very_small_layer",
@@ -148,6 +155,8 @@
       "area": 16.0,
       "current_primitive": "circle",
       "primitive_traits": [
+        "soft_curve",
+        "fill",
         "smooth curve",
         "radial symmetry",
         "soft visual footprint"
@@ -156,7 +165,7 @@
         "ellipse",
         "polygon"
       ],
-      "reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
+      "primitive_reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
     },
     {
       "type": "very_small_layer",
@@ -166,6 +175,8 @@
       "area": 12.0,
       "current_primitive": "circle",
       "primitive_traits": [
+        "soft_curve",
+        "fill",
         "smooth curve",
         "radial symmetry",
         "soft visual footprint"
@@ -174,7 +185,7 @@
         "ellipse",
         "polygon"
       ],
-      "reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
+      "primitive_reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
     },
     {
       "type": "very_small_layer",
@@ -184,6 +195,8 @@
       "area": 16.0,
       "current_primitive": "circle",
       "primitive_traits": [
+        "soft_curve",
+        "fill",
         "smooth curve",
         "radial symmetry",
         "soft visual footprint"
@@ -192,7 +205,7 @@
         "ellipse",
         "polygon"
       ],
-      "reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
+      "primitive_reason": "Circle is being used as a tiny patch; this often creates noisy fragmentation."
     },
     {
       "type": "extremely_stretched_layer",
@@ -202,6 +215,8 @@
       "aspect_ratio": 80.0,
       "current_primitive": "rectangle",
       "primitive_traits": [
+        "fill",
+        "large_block",
         "straight edges",
         "flat fill",
         "strong corners",
@@ -211,7 +226,7 @@
         "line",
         "trapezoid"
       ],
-      "reason": "Rectangle is highly stretched; a stroke-like or tapered primitive may be cleaner."
+      "primitive_reason": "Rectangle is highly stretched; a stroke-like or tapered primitive may be cleaner."
     },
     {
       "type": "extremely_stretched_layer",
@@ -221,6 +236,8 @@
       "aspect_ratio": 30.0,
       "current_primitive": "rectangle",
       "primitive_traits": [
+        "fill",
+        "large_block",
         "straight edges",
         "flat fill",
         "strong corners",
@@ -230,7 +247,7 @@
         "line",
         "trapezoid"
       ],
-      "reason": "Rectangle is highly stretched; a stroke-like or tapered primitive may be cleaner."
+      "primitive_reason": "Rectangle is highly stretched; a stroke-like or tapered primitive may be cleaner."
     },
     {
       "type": "nearly_identical_colors",
@@ -247,6 +264,8 @@
       ],
       "current_primitive": "triangle",
       "primitive_traits": [
+        "hard_edge",
+        "fill",
         "sharp point",
         "three hard edges",
         "directional"
@@ -254,7 +273,7 @@
       "possible_replacements": [
         "polygon"
       ],
-      "reason": "Nearby color variants may be mergeable into a simpler color decision."
+      "primitive_reason": "Nearby color variants may be mergeable into a simpler color decision."
     },
     {
       "type": "nearly_identical_colors",
@@ -271,6 +290,8 @@
       ],
       "current_primitive": "circle",
       "primitive_traits": [
+        "soft_curve",
+        "fill",
         "smooth curve",
         "radial symmetry",
         "soft visual footprint"
@@ -278,7 +299,7 @@
       "possible_replacements": [
         "polygon"
       ],
-      "reason": "Nearby color variants may be mergeable into a simpler color decision."
+      "primitive_reason": "Nearby color variants may be mergeable into a simpler color decision."
     },
     {
       "type": "nearly_identical_colors",
@@ -295,6 +316,8 @@
       ],
       "current_primitive": "circle",
       "primitive_traits": [
+        "soft_curve",
+        "fill",
         "smooth curve",
         "radial symmetry",
         "soft visual footprint"
@@ -302,7 +325,7 @@
       "possible_replacements": [
         "polygon"
       ],
-      "reason": "Nearby color variants may be mergeable into a simpler color decision."
+      "primitive_reason": "Nearby color variants may be mergeable into a simpler color decision."
     },
     {
       "type": "nearly_identical_colors",
@@ -319,6 +342,8 @@
       ],
       "current_primitive": "circle",
       "primitive_traits": [
+        "soft_curve",
+        "fill",
         "smooth curve",
         "radial symmetry",
         "soft visual footprint"
@@ -326,7 +351,7 @@
       "possible_replacements": [
         "polygon"
       ],
-      "reason": "Nearby color variants may be mergeable into a simpler color decision."
+      "primitive_reason": "Nearby color variants may be mergeable into a simpler color decision."
     },
     {
       "type": "nearly_identical_colors",
@@ -343,6 +368,8 @@
       ],
       "current_primitive": "circle",
       "primitive_traits": [
+        "soft_curve",
+        "fill",
         "smooth curve",
         "radial symmetry",
         "soft visual footprint"
@@ -350,7 +377,7 @@
       "possible_replacements": [
         "polygon"
       ],
-      "reason": "Nearby color variants may be mergeable into a simpler color decision."
+      "primitive_reason": "Nearby color variants may be mergeable into a simpler color decision."
     },
     {
       "type": "edge_fixing_fragment",
@@ -359,6 +386,8 @@
       "message": "Small thin layer near an image edge looks like an edge-fixing fragment.",
       "current_primitive": "rectangle",
       "primitive_traits": [
+        "fill",
+        "large_block",
         "straight edges",
         "flat fill",
         "strong corners",
@@ -368,7 +397,7 @@
         "line",
         "polygon"
       ],
-      "reason": "Rectangle is acting like edge cleanup; a line, arc, or polygon may express the edge more cleanly."
+      "primitive_reason": "Rectangle is acting like edge cleanup; a line, arc, or polygon may express the edge more cleanly."
     }
   ],
   "suspected_messy_regions": [

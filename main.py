@@ -6,6 +6,7 @@ from engine.analyzer.layer_analyzer import analyze_layers, score_layers
 from engine.parser.jsdn_parser import JsdnParseError, parse_jsdn
 from engine.renderer.preview_renderer import PreviewRenderError, render_preview
 from engine.reports.report_writer import write_report
+from engine.knowledge.primitive_kb import is_known_primitive
 from engine.vision.image_inspector import inspect_reference_image
 from engine.vision.visual_diff import VisualDiffError, compare_images
 
@@ -35,11 +36,23 @@ def build_report(image_path, input_path, preview_path=None, diff_path=None):
         "preview_path": rendered_preview_path,
         "visual_diff": visual_diff,
         "scores": scores,
+        "unknown_primitives": _unknown_primitives(layers),
         "issues": analysis["issues"],
         "suspected_messy_regions": analysis["suspected_messy_regions"],
         "estimated_removable_layers": analysis["estimated_removable_layers"],
         "notes": notes,
     }
+
+
+def _unknown_primitives(layers):
+    unknown = sorted(
+        {
+            str(layer["shape"])
+            for layer in layers
+            if not is_known_primitive(layer["shape"])
+        }
+    )
+    return unknown
 
 
 def main():
