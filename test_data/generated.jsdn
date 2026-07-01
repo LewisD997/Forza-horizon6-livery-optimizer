@@ -1,0 +1,126 @@
+{
+  "project": "FLO sample generated livery",
+  "layers": [
+    {
+      "id": "base_circle",
+      "shape": "circle",
+      "x": 90,
+      "y": 60,
+      "width": 120,
+      "height": 120,
+      "rotation": 0,
+      "color": "#d72828",
+      "opacity": 1
+    },
+    {
+      "id": "base_circle_duplicate",
+      "shape": "circle",
+      "x": 90,
+      "y": 60,
+      "width": 120,
+      "height": 120,
+      "rotation": 0,
+      "color": "#d72828",
+      "opacity": 1
+    },
+    {
+      "id": "long_edge_patch",
+      "shape": "rectangle",
+      "x": 2,
+      "y": 4,
+      "width": 160,
+      "height": 2,
+      "rotation": 0,
+      "color": "#111111",
+      "opacity": 0.9
+    },
+    {
+      "id": "thin_stretched_highlight",
+      "shape": "rectangle",
+      "x": 60,
+      "y": 220,
+      "width": 180,
+      "height": 6,
+      "rotation": 5,
+      "color": "#ffffff",
+      "opacity": 0.8
+    },
+    {
+      "id": "near_color_a",
+      "shape": "triangle",
+      "x": 180,
+      "y": 70,
+      "width": 40,
+      "height": 38,
+      "rotation": 18,
+      "color": "#3264c8",
+      "opacity": 1
+    },
+    {
+      "id": "near_color_b",
+      "shape": "triangle",
+      "x": 224,
+      "y": 74,
+      "width": 42,
+      "height": 36,
+      "rotation": 20,
+      "color": "#3365c9",
+      "opacity": 1
+    },
+    {
+      "id": "micro_1",
+      "shape": "circle",
+      "x": 300,
+      "y": 180,
+      "width": 3,
+      "height": 3,
+      "rotation": 0,
+      "color": "#222222",
+      "opacity": 1
+    },
+    {
+      "id": "micro_2",
+      "shape": "circle",
+      "x": 306,
+      "y": 184,
+      "width": 4,
+      "height": 3,
+      "rotation": 0,
+      "color": "#242424",
+      "opacity": 1
+    },
+    {
+      "id": "micro_3",
+      "shape": "circle",
+      "x": 312,
+      "y": 178,
+      "width": 4,
+      "height": 4,
+      "rotation": 0,
+      "color": "#202020",
+      "opacity": 1
+    },
+    {
+      "id": "micro_4",
+      "shape": "circle",
+      "x": 318,
+      "y": 187,
+      "width": 3,
+      "height": 4,
+      "rotation": 0,
+      "color": "#252525",
+      "opacity": 1
+    },
+    {
+      "id": "micro_5",
+      "shape": "circle",
+      "x": 324,
+      "y": 181,
+      "width": 4,
+      "height": 4,
+      "rotation": 0,
+      "color": "#232323",
+      "opacity": 1
+    }
+  ]
+}

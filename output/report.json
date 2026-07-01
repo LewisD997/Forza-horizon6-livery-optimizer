@@ -1,0 +1,196 @@
+{
+  "total_layers": 11,
+  "image_info": {
+    "path": "test_data\\original.png",
+    "size": {
+      "width": 400,
+      "height": 300
+    },
+    "dominant_colors": [
+      {
+        "color": "#f0f0e0",
+        "pixels": 99743
+      },
+      {
+        "color": "#d02020",
+        "pixels": 11277
+      },
+      {
+        "color": "#3060c0",
+        "pixels": 6596
+      },
+      {
+        "color": "#101010",
+        "pixels": 2384
+      }
+    ],
+    "edge_density": 0.0201,
+    "high_detail_regions": [],
+    "reader": "stdlib_png"
+  },
+  "issues": [
+    {
+      "type": "duplicate_layer",
+      "severity": "high",
+      "layer_id": "base_circle_duplicate",
+      "message": "Layer appears to duplicate base_circle.",
+      "related_layers": [
+        "base_circle",
+        "base_circle_duplicate"
+      ]
+    },
+    {
+      "type": "very_small_layer",
+      "severity": "medium",
+      "layer_id": "micro_1",
+      "message": "Layer is tiny and may be visual noise or a micro patch.",
+      "area": 9.0
+    },
+    {
+      "type": "very_small_layer",
+      "severity": "medium",
+      "layer_id": "micro_2",
+      "message": "Layer is tiny and may be visual noise or a micro patch.",
+      "area": 12.0
+    },
+    {
+      "type": "very_small_layer",
+      "severity": "medium",
+      "layer_id": "micro_3",
+      "message": "Layer is tiny and may be visual noise or a micro patch.",
+      "area": 16.0
+    },
+    {
+      "type": "very_small_layer",
+      "severity": "medium",
+      "layer_id": "micro_4",
+      "message": "Layer is tiny and may be visual noise or a micro patch.",
+      "area": 12.0
+    },
+    {
+      "type": "very_small_layer",
+      "severity": "medium",
+      "layer_id": "micro_5",
+      "message": "Layer is tiny and may be visual noise or a micro patch.",
+      "area": 16.0
+    },
+    {
+      "type": "extremely_stretched_layer",
+      "severity": "medium",
+      "layer_id": "long_edge_patch",
+      "message": "Layer is extremely stretched and may be a crude edge or line workaround.",
+      "aspect_ratio": 80.0
+    },
+    {
+      "type": "extremely_stretched_layer",
+      "severity": "medium",
+      "layer_id": "thin_stretched_highlight",
+      "message": "Layer is extremely stretched and may be a crude edge or line workaround.",
+      "aspect_ratio": 30.0
+    },
+    {
+      "type": "nearly_identical_colors",
+      "severity": "low",
+      "layer_id": "near_color_a",
+      "message": "Layer color is nearly identical to another layer color.",
+      "related_layers": [
+        "near_color_a",
+        "near_color_b"
+      ],
+      "colors": [
+        "#3264c8",
+        "#3365c9"
+      ]
+    },
+    {
+      "type": "nearly_identical_colors",
+      "severity": "low",
+      "layer_id": "micro_1",
+      "message": "Layer color is nearly identical to another layer color.",
+      "related_layers": [
+        "micro_1",
+        "micro_2"
+      ],
+      "colors": [
+        "#222222",
+        "#242424"
+      ]
+    },
+    {
+      "type": "nearly_identical_colors",
+      "severity": "low",
+      "layer_id": "micro_2",
+      "message": "Layer color is nearly identical to another layer color.",
+      "related_layers": [
+        "micro_2",
+        "micro_4"
+      ],
+      "colors": [
+        "#242424",
+        "#252525"
+      ]
+    },
+    {
+      "type": "nearly_identical_colors",
+      "severity": "low",
+      "layer_id": "micro_3",
+      "message": "Layer color is nearly identical to another layer color.",
+      "related_layers": [
+        "micro_3",
+        "micro_5"
+      ],
+      "colors": [
+        "#202020",
+        "#232323"
+      ]
+    },
+    {
+      "type": "nearly_identical_colors",
+      "severity": "low",
+      "layer_id": "micro_4",
+      "message": "Layer color is nearly identical to another layer color.",
+      "related_layers": [
+        "micro_4",
+        "micro_5"
+      ],
+      "colors": [
+        "#252525",
+        "#232323"
+      ]
+    },
+    {
+      "type": "edge_fixing_fragment",
+      "severity": "medium",
+      "layer_id": "long_edge_patch",
+      "message": "Small thin layer near an image edge looks like an edge-fixing fragment."
+    }
+  ],
+  "suspected_messy_regions": [
+    {
+      "type": "messy_small_layer_cluster",
+      "severity": "medium",
+      "layer_count": 5,
+      "layer_ids": [
+        "micro_2",
+        "micro_1",
+        "micro_3",
+        "micro_4",
+        "micro_5"
+      ],
+      "bounds": {
+        "x": 300.0,
+        "y": 178.0,
+        "width": 24.0,
+        "height": 9.0
+      },
+      "message": "Many small layers are packed into a small area. This may be replaceable with cleaner primitives."
+    }
+  ],
+  "estimated_removable_layers": 7,
+  "notes": [
+    "MVP only reports suspicious layers. It does not rewrite or delete the livery.",
+    "The original image is used for basic visual context only in this version.",
+    "Possible fully covered layers are not detected yet because the renderer is still a placeholder.",
+    "Reference image edge density: 0.0201"
+  ]
+}
