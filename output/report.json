@@ -32,6 +32,59 @@
     "high_detail_regions": []
   },
   "preview_path": "output\\preview.png",
+  "visual_diff": {
+    "diff_path": "output\\diff.png",
+    "global_difference_score": 0.0918,
+    "high_difference_regions": [
+      {
+        "x": 240,
+        "y": 120,
+        "width": 40,
+        "height": 40,
+        "difference_score": 0.419
+      },
+      {
+        "x": 200,
+        "y": 80,
+        "width": 40,
+        "height": 40,
+        "difference_score": 0.397
+      },
+      {
+        "x": 240,
+        "y": 80,
+        "width": 40,
+        "height": 40,
+        "difference_score": 0.3697
+      },
+      {
+        "x": 280,
+        "y": 80,
+        "width": 40,
+        "height": 40,
+        "difference_score": 0.2954
+      },
+      {
+        "x": 280,
+        "y": 120,
+        "width": 40,
+        "height": 40,
+        "difference_score": 0.2337
+      },
+      {
+        "x": 200,
+        "y": 120,
+        "width": 40,
+        "height": 40,
+        "difference_score": 0.1824
+      }
+    ]
+  },
+  "scores": {
+    "cleanliness_score": 55,
+    "fragmentation_score": 67,
+    "layer_efficiency_score": 40.45
+  },
   "issues": [
     {
       "type": "duplicate_layer",

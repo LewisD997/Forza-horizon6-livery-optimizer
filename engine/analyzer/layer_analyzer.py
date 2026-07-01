@@ -34,6 +34,53 @@ def analyze_layers(layers, image_info):
     }
 
 
+def score_layers(layers, analysis):
+    total_layers = max(1, len(layers))
+    issues = analysis["issues"]
+    messy_regions = analysis["suspected_messy_regions"]
+
+    tiny_count = _issue_count(issues, "very_small_layer")
+    stretched_count = _issue_count(issues, "extremely_stretched_layer")
+    duplicate_count = _issue_count(issues, "duplicate_layer")
+    fragment_count = _issue_count(issues, "edge_fixing_fragment")
+    removable_count = analysis["estimated_removable_layers"]
+    messy_layer_count = sum(region.get("layer_count", 0) for region in messy_regions)
+
+    cleanliness_penalty = (
+        duplicate_count * 8
+        + tiny_count * 4
+        + stretched_count * 3
+        + fragment_count * 5
+        + len(messy_regions) * 6
+    )
+    fragmentation_raw = (
+        tiny_count * 7
+        + fragment_count * 8
+        + messy_layer_count * 4
+        + stretched_count * 2
+    )
+    removable_ratio = removable_count / total_layers
+    efficiency_penalty = removable_ratio * 70 + duplicate_count * 5 + tiny_count * 2
+
+    return {
+        "cleanliness_score": _score_from_penalty(cleanliness_penalty),
+        "fragmentation_score": _clamp_score(fragmentation_raw),
+        "layer_efficiency_score": _score_from_penalty(efficiency_penalty),
+    }
+
+
+def _issue_count(issues, issue_type):
+    return sum(1 for issue in issues if issue["type"] == issue_type)
+
+
+def _score_from_penalty(penalty):
+    return _clamp_score(100 - penalty)
+
+
+def _clamp_score(value):
+    return round(max(0, min(100, value)), 2)
+
+
 def _duplicate_layers(layers):
     seen = defaultdict(list)
     for layer in layers:

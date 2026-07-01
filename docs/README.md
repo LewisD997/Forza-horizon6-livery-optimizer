@@ -11,7 +11,7 @@ This project does not convert images to SVG. It does not refit a whole image fro
 From this folder:
 
 ```bash
-python main.py --image test_data/original.png --input test_data/generated.jsdn --report output/report.json --preview output/preview.png
+python main.py --image test_data/original.png --input test_data/generated.jsdn --report output/report.json --preview output/preview.png --diff output/diff.png
 ```
 
 The report is written to:
@@ -24,6 +24,12 @@ The preview is written to:
 
 ```text
 output/preview.png
+```
+
+The visual diff is written to:
+
+```text
+output/diff.png
 ```
 
 ## MVP Features
@@ -45,6 +51,9 @@ output/preview.png
 - Renders a basic PNG preview of the generated layer stack when `--preview` is provided.
 - Preview rendering currently supports approximate rectangle, square, circle, ellipse, triangle, and line primitives.
 - Unknown shape types are drawn as semi-transparent debug bounding boxes and noted in the report.
+- Compares the original image against the rendered preview when `--diff` is provided.
+- Reports a global visual difference score and high-difference grid regions.
+- Reports simple cleanliness, fragmentation, and layer efficiency scores.
 
 ## Report Shape
 
@@ -53,6 +62,16 @@ output/preview.png
   "total_layers": 0,
   "image_info": {},
   "preview_path": null,
+  "visual_diff": {
+    "diff_path": null,
+    "global_difference_score": 0,
+    "high_difference_regions": []
+  },
+  "scores": {
+    "cleanliness_score": 0,
+    "fragmentation_score": 0,
+    "layer_efficiency_score": 0
+  },
   "issues": [],
   "suspected_messy_regions": [],
   "estimated_removable_layers": 0,
