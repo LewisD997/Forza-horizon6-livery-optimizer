@@ -8,8 +8,16 @@ Full notes are in [docs/README.md](docs/README.md).
 
 ## Quick Start
 
+For `.jsdn` input:
+
 ```bash
-python main.py --image test_data/original.png --input test_data/generated.jsdn --report output/report.json --preview output/preview.png --diff output/diff.png --log-training-cases
+python main.py --image test_data/original.png --input test_data/generated.jsdn --input-format jsdn --report output/report.json --preview output/preview.png --diff output/diff.png --log-training-cases
 ```
 
-The current MVP reports problems, renders a preview, generates a visual diff, uses a local primitive knowledge base, and produces ranked optimization suggestions. It does not delete, rewrite, or optimize the livery file.
+For Paint Studio `geometry.json` input:
+
+```bash
+python main.py --image test_data/original.png --input test_data/paint_studio_geometry_sample.json --input-format paintstudio --report output/paintstudio_report.json --preview output/paintstudio_preview.png --diff output/paintstudio_diff.png
+```
+
+The current MVP reports problems, renders a preview, generates a visual diff, uses a local primitive knowledge base, and produces ranked optimization suggestions. It can read `.jsdn` and Paint Studio `geometry.json` inputs. It does not delete, rewrite, or optimize the livery file.

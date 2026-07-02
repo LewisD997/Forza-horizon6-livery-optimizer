@@ -10,8 +10,16 @@ This project does not convert images to SVG. It does not refit a whole image fro
 
 From this folder:
 
+For `.jsdn` input:
+
 ```bash
-python main.py --image test_data/original.png --input test_data/generated.jsdn --report output/report.json --preview output/preview.png --diff output/diff.png --log-training-cases
+python main.py --image test_data/original.png --input test_data/generated.jsdn --input-format jsdn --report output/report.json --preview output/preview.png --diff output/diff.png --log-training-cases
+```
+
+For Paint Studio `geometry.json` input:
+
+```bash
+python main.py --image test_data/original.png --input test_data/paint_studio_geometry_sample.json --input-format paintstudio --report output/paintstudio_report.json --preview output/paintstudio_preview.png --diff output/paintstudio_diff.png
 ```
 
 The report is written to:
@@ -41,6 +49,7 @@ database/training_cases.jsonl
 ## MVP Features
 
 - Parses `.jsdn` as JSON first.
+- Parses Paint Studio `geometry.json` files when `--input-format paintstudio` is used, or when auto-detection sees a top-level Paint Studio `shapes` list.
 - Normalizes each layer into a stable structure.
 - Loads the original image and extracts:
   - image size
@@ -69,6 +78,7 @@ database/training_cases.jsonl
 ```json
 {
   "total_layers": 0,
+  "input_format": "jsdn",
   "image_info": {},
   "preview_path": null,
   "visual_diff": {
@@ -162,3 +172,17 @@ test_data/debug/
 ```
 
 That dump is meant to help inspect real exported formats later.
+
+## Paint Studio Geometry Input
+
+Paint Studio stores generated designs as `geometry.json` with a top-level `shapes` list. FLO v0.5.3 can read that file as an initial solution:
+
+```bash
+python main.py --image test_data/original.png --input path/to/geometry.json --input-format paintstudio --report output/paintstudio_report.json --preview output/paintstudio_preview.png --diff output/paintstudio_diff.png
+```
+
+Supported Paint Studio types are documented in:
+
+```text
+docs/paint_studio_geometry_adapter.md
+```
