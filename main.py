@@ -2,6 +2,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from engine.analyzer.anime_artifact_analyzer import analyze_anime_artifacts
 from engine.analyzer.layer_analyzer import analyze_layers, score_layers
 from engine.optimizer.suggestion_engine import (
     generate_optimization_suggestions,
@@ -45,6 +46,11 @@ def build_report(image_path, input_path, preview_path=None, diff_path=None, inpu
         analysis["issues"],
         visual_diff=visual_diff,
     )
+    anime_artifact_analysis = analyze_anime_artifacts(
+        layers,
+        image_info=image_info,
+        visual_diff=visual_diff,
+    )
 
     return {
         "total_layers": len(layers),
@@ -54,6 +60,7 @@ def build_report(image_path, input_path, preview_path=None, diff_path=None, inpu
         "visual_diff": visual_diff,
         "scores": scores,
         "unknown_primitives": _unknown_primitives(layers),
+        "anime_artifact_analysis": anime_artifact_analysis,
         "optimization_suggestions": suggestions,
         "suggestion_summary": summarize_suggestions(suggestions),
         "issues": analysis["issues"],
