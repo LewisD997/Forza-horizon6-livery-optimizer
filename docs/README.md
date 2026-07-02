@@ -69,6 +69,7 @@ database/training_cases.jsonl
 - Compares the original image against the rendered preview when `--diff` is provided.
 - Reports a global visual difference score and high-difference grid regions.
 - Reports simple cleanliness, fragmentation, and layer efficiency scores.
+- Reports `anime_artifact_analysis` for suspicious anime-generated artifact regions such as visible round primitive clusters, tiny layer fragmentation, glow/disk blob risk, and internal-only line warnings.
 - Uses a local Forza primitive knowledge base to explain suspicious shape usage and suggest possible replacement primitives.
 - Generates ranked optimization suggestions without modifying `.jsdn`.
 - Can log pending suggestion cases for later human review.
@@ -92,6 +93,20 @@ database/training_cases.jsonl
     "layer_efficiency_score": 0
   },
   "unknown_primitives": [],
+  "anime_artifact_analysis": {
+    "summary": {
+      "artifact_region_count": 0,
+      "high_priority_region_count": 0,
+      "visible_round_primitive_count": 0,
+      "ellipse_cluster_count": 0,
+      "soft_blur_risk_count": 0,
+      "fragmentation_risk_count": 0,
+      "line_internal_only_count": 0,
+      "overall_anime_artifact_score": 0
+    },
+    "regions": [],
+    "notes": []
+  },
   "optimization_suggestions": [],
   "suggestion_summary": {
     "total_suggestions": 0,
@@ -142,6 +157,31 @@ FLO can generate ranked suggestions in three modes:
 - `reconstruction`: local rebuild candidates for messy clusters or high-difference regions.
 
 Suggestions are advisory only. FLO does not automatically edit the livery file.
+
+## Anime Artifact Analysis
+
+FLO reports anime-specific artifact risk under:
+
+```text
+anime_artifact_analysis
+```
+
+This pass scans normalized layers in grid regions and flags local signs of generated-looking output:
+
+- visible round/blob primitive clusters
+- ellipse-heavy regions
+- tiny layer fragmentation
+- glow/disk soft blur risk
+- internal-only line geometry
+- overlap with high visual-difference regions
+
+It supports FLO's goal of high visual similarity with lower generated-artifact visibility and cleaner, sharper anime character output.
+
+Full notes:
+
+```text
+docs/anime_artifact_region_analyzer.md
+```
 
 ## Training Cases
 

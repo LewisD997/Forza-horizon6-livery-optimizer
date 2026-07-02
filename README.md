@@ -20,4 +20,10 @@ For Paint Studio `geometry.json` input:
 python main.py --image test_data/original.png --input test_data/paint_studio_geometry_sample.json --input-format paintstudio --report output/paintstudio_report.json --preview output/paintstudio_preview.png --diff output/paintstudio_diff.png
 ```
 
-The current MVP reports problems, renders a preview, generates a visual diff, uses a local primitive knowledge base, and produces ranked optimization suggestions. It can read `.jsdn` and Paint Studio `geometry.json` inputs. It does not delete, rewrite, or optimize the livery file.
+The current MVP reports problems, renders a preview, generates a visual diff, detects anime artifact regions, uses a local primitive knowledge base, and produces ranked optimization suggestions. It can read `.jsdn` and Paint Studio `geometry.json` inputs. It does not delete, rewrite, or optimize the livery file.
+
+Anime artifact diagnostics are reported under:
+
+```text
+anime_artifact_analysis
+```
