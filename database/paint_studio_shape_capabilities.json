@@ -1,0 +1,116 @@
+{
+  "shapes": [
+    {
+      "name": "square",
+      "shape_word": "0x0065",
+      "generator_supported": true,
+      "editor_supported": true,
+      "injector_supported": true,
+      "notes": "Generator emits rectangles as TypeRotatedRectangle; injector maps rectangle/square geometry to WordSquare 0x0065."
+    },
+    {
+      "name": "circle",
+      "shape_word": "0x0066",
+      "generator_supported": true,
+      "editor_supported": true,
+      "injector_supported": true,
+      "notes": "Generator emits KindEllipse/TypeRotatedEllipse. A circle is represented by equal rx/ry. Injector writes WordCircle 0x0066."
+    },
+    {
+      "name": "ellipse",
+      "shape_word": "0x0066",
+      "generator_supported": true,
+      "editor_supported": true,
+      "injector_supported": true,
+      "notes": "Ellipse is implemented as Circle word 0x0066 with non-uniform scale. The distinct WordEllipse 0x0088 is documented as rendering like a crescent, so it is not used for normal ellipses."
+    },
+    {
+      "name": "triangle",
+      "shape_word": "0x0068",
+      "generator_supported": true,
+      "editor_supported": true,
+      "injector_supported": true,
+      "notes": "Generator emits TypeTriangle. Injector uses TriangleFit and writes WordTriangle 0x0068."
+    },
+    {
+      "name": "line",
+      "shape_word": null,
+      "generator_supported": "internal_only",
+      "editor_supported": true,
+      "injector_supported": false,
+      "notes": "TypeLine/KindLine exists for internal raster/editor geometry, but model.go and inject/layer.go state there is no in-game line primitive. Injector skips TypeLine."
+    },
+    {
+      "name": "glow",
+      "shape_word": "0x00e4",
+      "generator_supported": true,
+      "editor_supported": true,
+      "injector_supported": true,
+      "notes": "KindGlow/TypeGradGlow is a native FH6 radial gradient primitive. Gaussian mode can emit glow splats. Editor palette can add glow."
+    },
+    {
+      "name": "disk",
+      "shape_word": "0x00e2",
+      "generator_supported": "known_but_not_emitted",
+      "editor_supported": true,
+      "injector_supported": true,
+      "notes": "KindDisk/TypeGradDisk is modeled and injectable as a feathered radial disk. Editor palette can add disk; normal generator path does not appear to emit it by default."
+    },
+    {
+      "name": "circle_border",
+      "shape_word": "0x0070",
+      "generator_supported": "known_but_not_emitted",
+      "editor_supported": true,
+      "injector_supported": true,
+      "notes": "WordCircleBorder is defined as 0x0070, and maskbank manifest includes ring-sm_0070. It is available through mask/dictionary support, not normal generator output."
+    },
+    {
+      "name": "arc",
+      "shape_word": null,
+      "generator_supported": "known_but_not_emitted",
+      "editor_supported": true,
+      "injector_supported": true,
+      "notes": "Maskbank manifest contains multiple arc/gentlearc entries. They are supported as registered mask words; exact word depends on the selected bank entry."
+    },
+    {
+      "name": "crescent",
+      "shape_word": "0x0088",
+      "generator_supported": "known_but_not_emitted",
+      "editor_supported": true,
+      "injector_supported": true,
+      "notes": "WordEllipse 0x0088 is documented as rendering like a crescent. Maskbank also includes crescent-labeled entries such as 0x007f and 0x0084."
+    },
+    {
+      "name": "trapezoid",
+      "shape_word": null,
+      "generator_supported": "unknown",
+      "editor_supported": "unknown",
+      "injector_supported": "unknown",
+      "notes": "No explicit trapezoid primitive or obvious trapezoid mask was confirmed in the inspected files. Could still exist as an unclassified mask word and needs manual registry testing."
+    },
+    {
+      "name": "glyph",
+      "shape_word": null,
+      "generator_supported": "known_but_not_emitted",
+      "editor_supported": true,
+      "injector_supported": true,
+      "notes": "Maskbank registers glyph/letter words. Glyph proposer and glyph prepass exist, but normal generator defaults do not appear to emit glyphs unless glyph features are enabled and mask-capable backend support is present."
+    },
+    {
+      "name": "mask",
+      "shape_word": null,
+      "generator_supported": "known_but_not_emitted",
+      "editor_supported": true,
+      "injector_supported": true,
+      "notes": "Mask words are registered through model.RegisterMaskWord from internal/maskbank. Shape.Type can be the in-game mask word with affine Data [cx, cy, Hx, Hy, rot, skew]."
+    },
+    {
+      "name": "unknown",
+      "shape_word": null,
+      "generator_supported": "unknown",
+      "editor_supported": "unknown",
+      "injector_supported": "unknown",
+      "notes": "Fallback for unconfirmed shape words or primitives not represented in the inspected registry."
+    }
+  ]
+}
