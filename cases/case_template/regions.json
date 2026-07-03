@@ -1,0 +1,62 @@
+{
+  "case_id": "case_template",
+  "coordinate_space": "source_full.png",
+  "note": "Example fake coordinates only. Replace with real manually labeled regions for real cases.",
+  "regions": [
+    {
+      "region_id": "left_eye",
+      "region_type": "eye",
+      "label": "Example left eye region",
+      "x": 120,
+      "y": 90,
+      "width": 42,
+      "height": 24,
+      "example_only": true,
+      "notes": "Fake coordinates. Used to show expected structure."
+    },
+    {
+      "region_id": "right_eye",
+      "region_type": "eye",
+      "label": "Example right eye region",
+      "x": 205,
+      "y": 91,
+      "width": 40,
+      "height": 24,
+      "example_only": true,
+      "notes": "Fake coordinates. Used to show expected structure."
+    },
+    {
+      "region_id": "left_eyebrow",
+      "region_type": "eyebrow_upper_eyelid",
+      "label": "Example eyebrow / upper eyelid region",
+      "x": 118,
+      "y": 76,
+      "width": 48,
+      "height": 14,
+      "example_only": true,
+      "notes": "Fake coordinates. Used to show expected structure."
+    },
+    {
+      "region_id": "hair_tip_sample",
+      "region_type": "hair_tip",
+      "label": "Example sharp hair tip region",
+      "x": 70,
+      "y": 40,
+      "width": 38,
+      "height": 64,
+      "example_only": true,
+      "notes": "Fake coordinates. Used to show expected structure."
+    },
+    {
+      "region_id": "face_outline_sample",
+      "region_type": "face_outline",
+      "label": "Example face outline region",
+      "x": 95,
+      "y": 65,
+      "width": 180,
+      "height": 190,
+      "example_only": true,
+      "notes": "Fake coordinates. Used to show expected structure."
+    }
+  ]
+}

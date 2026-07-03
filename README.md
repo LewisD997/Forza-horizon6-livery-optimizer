@@ -27,3 +27,15 @@ Anime artifact diagnostics are reported under:
 ```text
 anime_artifact_analysis
 ```
+
+## Case-Driven Development
+
+FLO now includes a text-only case library structure under `cases/` and hypothesis-level anime livery rules in:
+
+```text
+database/anime_livery_rules.json
+```
+
+These rules are not verified yet. They stay at hypothesis level until real anime livery cases, human notes, and region labels provide evidence.
+
+There is still no automatic cleanup or optimized geometry output.

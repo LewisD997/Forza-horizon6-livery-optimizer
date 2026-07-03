@@ -1,0 +1,13 @@
+{
+  "case_id": "case_template",
+  "case_name": "Template anime livery case",
+  "status": "template",
+  "source_image": "source_full.png",
+  "paintstudio_geometry": "paintstudio_geometry.json",
+  "paintstudio_preview": "paintstudio_preview.png",
+  "flo_report": "flo_report.json",
+  "flo_diff": "flo_diff.png",
+  "notes": "human_notes.md",
+  "regions": "regions.json",
+  "created_for": "FLO case-driven development template"
+}

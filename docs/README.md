@@ -71,6 +71,7 @@ database/training_cases.jsonl
 - Reports simple cleanliness, fragmentation, and layer efficiency scores.
 - Reports `anime_artifact_analysis` for suspicious anime-generated artifact regions such as visible round primitive clusters, tiny layer fragmentation, glow/disk blob risk, and internal-only line warnings.
 - Uses a local Forza primitive knowledge base to explain suspicious shape usage and suggest possible replacement primitives.
+- Provides a case-driven development structure so future anime livery rules can be backed by real cases instead of assumptions.
 - Generates ranked optimization suggestions without modifying `.jsdn`.
 - Can log pending suggestion cases for later human review.
 
@@ -126,6 +127,7 @@ database/training_cases.jsonl
 
 - No UI.
 - No AI.
+- No model training.
 - No destructive optimization.
 - No automatic layer rewriting.
 
@@ -182,6 +184,48 @@ Full notes:
 ```text
 docs/anime_artifact_region_analyzer.md
 ```
+
+## Case-Driven Development
+
+FLO keeps a text-only case library template under:
+
+```text
+cases/
+```
+
+Starter anime livery rules live in:
+
+```text
+database/anime_livery_rules.json
+```
+
+All current rules are hypothesis-level only:
+
+- `confidence`: `hypothesis`
+- `evidence_level`: `0`
+- `evidence_cases`: `[]`
+
+Real cases should include source images, Paint Studio geometry, previews, FLO reports, region labels, and human notes. The template explains where to place those files, but no copyrighted images or placeholder binaries are included.
+
+Case schema:
+
+```text
+docs/case_library_schema.md
+```
+
+Development direction:
+
+```text
+docs/flo_case_driven_development.md
+```
+
+Validation:
+
+```bash
+python scripts/validate_case_library.py
+```
+
+This is still diagnostic-only. FLO does not automatically clean up or rewrite geometry.
 
 ## Training Cases
 
