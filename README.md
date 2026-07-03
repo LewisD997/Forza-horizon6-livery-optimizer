@@ -51,3 +51,11 @@ python scripts/diagnose_paintstudio_renderer.py --case cases/case_0001
 ```
 
 It writes diagnostic render variants under the case folder without modifying geometry.
+
+Geometry semantics can be inspected with:
+
+```bash
+python scripts/debug_paintstudio_geometry_layers.py --case cases/case_0001
+```
+
+This creates layer slices, type-isolation renders, and background interpretation tests for debugging Paint Studio `geometry.json` semantics.

@@ -251,6 +251,24 @@ Full notes:
 docs/paint_studio_renderer_compatibility_debugging.md
 ```
 
+Geometry semantics audit:
+
+```bash
+python scripts/debug_paintstudio_geometry_layers.py --case cases/case_0001
+```
+
+This writes layer slices, type-isolation renders, and background interpretation tests under:
+
+```text
+cases/case_0001/geometry_debug/
+```
+
+Full notes:
+
+```text
+docs/paint_studio_geometry_semantics_audit.md
+```
+
 ## Training Cases
 
 Use `--log-training-cases` to append pending review cases to:
