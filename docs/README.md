@@ -227,6 +227,30 @@ python scripts/validate_case_library.py
 
 This is still diagnostic-only. FLO does not automatically clean up or rewrite geometry.
 
+## Renderer Compatibility Diagnostic
+
+Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.
+
+If Paint Studio preview looks good but FLO preview looks wrong, treat the case as renderer compatibility debugging first. Do not trust visual diff, anime artifact analysis, or cleanup evidence until FLO preview roughly matches Paint Studio preview.
+
+Run:
+
+```bash
+python scripts/diagnose_paintstudio_renderer.py --case cases/case_0001
+```
+
+The script creates render variants and difference scores under:
+
+```text
+cases/case_0001/renderer_diagnostic/
+```
+
+Full notes:
+
+```text
+docs/paint_studio_renderer_compatibility_debugging.md
+```
+
 ## Training Cases
 
 Use `--log-training-cases` to append pending review cases to:

@@ -1,5 +1,8 @@
 trash/
 research/
+cases/case_*/
+!cases/case_template/
+!cases/case_template/**
 __pycache__/
 *.py[cod]
 .pytest_cache/

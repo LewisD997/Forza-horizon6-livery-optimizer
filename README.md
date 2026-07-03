@@ -39,3 +39,15 @@ database/anime_livery_rules.json
 These rules are not verified yet. They stay at hypothesis level until real anime livery cases, human notes, and region labels provide evidence.
 
 There is still no automatic cleanup or optimized geometry output.
+
+## Renderer Compatibility Diagnostic
+
+Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.
+
+Run the renderer diagnostic on a prepared case:
+
+```bash
+python scripts/diagnose_paintstudio_renderer.py --case cases/case_0001
+```
+
+It writes diagnostic render variants under the case folder without modifying geometry.

@@ -9,6 +9,9 @@ Do not treat these notes as verified rules until they are backed by multiple rea
 - Character or design:
 - Image source / rights status:
 - Visual priority:
+- Case type: normal anime livery case / renderer compatibility case
+
+If Paint Studio preview looks good but FLO preview looks very wrong, mark this as a renderer compatibility case. Do not use it as anime cleanup training evidence until the FLO renderer roughly matches Paint Studio preview.
 
 ## Paint Studio Output Observations
 
