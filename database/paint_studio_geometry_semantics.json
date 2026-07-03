@@ -1,0 +1,53 @@
+{
+  "type_1_rectangle": {
+    "type_code": 1,
+    "data_semantics": "Background rectangle. engine.newRun writes Data as [0, 0, width, height], but RenderFH6 treats shapes[0] specially and fills the whole canvas from shapes[0].Color RGB instead of rasterizing this rectangle.",
+    "rotation": "none",
+    "preview_behavior": "shapes[0] is background; Data is effectively ignored by RenderFH6. Background alpha is ignored when transparentBG is false.",
+    "source_file": "research/fh6-paint-studio/internal/engine/run.go; research/fh6-paint-studio/internal/imageio/output.go",
+    "confidence": "source_confirmed"
+  },
+  "type_2_rotated_rectangle": {
+    "type_code": 2,
+    "data_semantics": "[cx, cy, halfW, halfH, thetaDeg]",
+    "rotation_unit": "degrees",
+    "rotation_direction": "Use source formula: xr = dx*cos(theta) + dy*sin(theta), yr = -dx*sin(theta) + dy*cos(theta), theta converted by pi/180.",
+    "source_file": "research/fh6-paint-studio/internal/model/model.go; research/fh6-paint-studio/internal/raster/raster.go",
+    "confidence": "source_confirmed"
+  },
+  "type_16_rotated_ellipse": {
+    "type_code": 16,
+    "data_semantics": "[cx, cy, rx, ry, thetaDeg]",
+    "rotation_unit": "degrees",
+    "rotation_direction": "Use source formula: xr = dx*cos(theta) + dy*sin(theta), yr = -dx*sin(theta) + dy*cos(theta), theta converted by pi/180.",
+    "source_file": "research/fh6-paint-studio/internal/model/model.go; research/fh6-paint-studio/internal/raster/raster.go",
+    "confidence": "source_confirmed"
+  },
+  "type_32_triangle": {
+    "type_code": 32,
+    "data_semantics": "[x1, y1, x2, y2, x3, y3]",
+    "source_file": "research/fh6-paint-studio/internal/model/model.go; research/fh6-paint-studio/internal/raster/raster.go",
+    "confidence": "source_confirmed"
+  },
+  "color": {
+    "channel_order": "RGBA",
+    "rgb_semantics": "RGB channels are stored as sRGB bytes.",
+    "alpha_semantics": "Straight alpha. 0 is transparent, 255 is opaque. Effective alpha is Color[3]/255, multiplied by per-pixel coverage for gradients and masks.",
+    "compositing": "RenderFH6 decodes RGB to linear light and uses source-over blending, then converts RGB back to sRGB for preview output.",
+    "source_file": "research/fh6-paint-studio/internal/model/model.go; research/fh6-paint-studio/internal/model/color.go; research/fh6-paint-studio/internal/imageio/output.go",
+    "confidence": "source_confirmed"
+  },
+  "layer_order": {
+    "render_order": "Array order. shapes[0] is background; shapes[1:] are rendered from low index to high index, each later shape composited over earlier shapes.",
+    "storage_order": "Back-to-front.",
+    "source_file": "research/fh6-paint-studio/internal/imageio/output.go; research/fh6-paint-studio/internal/library/library.go",
+    "confidence": "source_confirmed"
+  },
+  "preview_canvas": {
+    "size_rule": "Preview size is the prepared generation width and height. Load can downscale by maxRes; region/crop and pad-transparent paths can change working size before mapping back.",
+    "background_rule": "If transparentBG is false, the preview canvas is filled with shapes[0].Color RGB at alpha 1. If transparentBG is true, the canvas starts transparent.",
+    "antialiasing": "RenderFH6 supports optional SSAA and linear-light box downsampling. Studio final preview uses ss=1; CLI preview can use the -ss value.",
+    "source_file": "research/fh6-paint-studio/internal/imageio/imageio.go; research/fh6-paint-studio/internal/imageio/output.go; research/fh6-paint-studio/internal/runner/runner.go; research/fh6-paint-studio/cmd/fh6paint/main.go",
+    "confidence": "source_confirmed"
+  }
+}

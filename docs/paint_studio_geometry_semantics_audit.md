@@ -4,6 +4,8 @@ v0.5.6 showed that FLO's Paint Studio preview mismatch is not solved by simple r
 
 The case_0001 Paint Studio preview now uses the real Paint Studio library preview, not a UI screenshot. FLO preview is still far away, so the problem is deeper than screenshot comparison.
 
+v0.5.8 moves this work from heuristic visual diagnosis to source-grounded semantics by inspecting FH6 Paint Studio's model, raster, imageio, runner, CLI, and library source files.
+
 ## Why v0.5.6 Was Not Enough
 
 v0.5.6 tested:
