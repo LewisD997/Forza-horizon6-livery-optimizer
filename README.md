@@ -44,6 +44,14 @@ There is still no automatic cleanup or optimized geometry output.
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.
 
+For source-grounded Paint Studio preview rendering, run:
+
+```bash
+python scripts/render_paintstudio_source_preview.py --case cases/case_0001 --ssaa 2
+```
+
+This creates `source_grounded` preview outputs under the case folder and uses Paint Studio source-confirmed semantics for background, layer order, center-based rectangles/ellipses, triangle vertices, RGBA color, and linear-light alpha blending.
+
 Run the renderer diagnostic on a prepared case:
 
 ```bash

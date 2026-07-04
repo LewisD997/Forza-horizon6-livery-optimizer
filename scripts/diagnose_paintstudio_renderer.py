@@ -23,7 +23,7 @@ def main():
     paintstudio_preview_path = case_dir / "paintstudio_preview.png"
     output_dir = case_dir / "renderer_diagnostic"
 
-    missing = [path for path in (geometry_path, source_path, paintstudio_preview_path) if not path.exists()]
+    missing = [path for path in (geometry_path, source_path) if not path.exists()]
     if missing:
         print("Missing required case files:")
         for path in missing:
@@ -33,7 +33,7 @@ def main():
     report = diagnose_paint_studio_geometry(
         str(geometry_path),
         source_image_path=str(source_path),
-        paintstudio_preview_path=str(paintstudio_preview_path),
+        paintstudio_preview_path=str(paintstudio_preview_path) if paintstudio_preview_path.exists() else None,
         output_dir=str(output_dir),
     )
 

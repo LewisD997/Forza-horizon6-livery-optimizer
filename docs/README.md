@@ -233,6 +233,20 @@ Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's p
 
 If Paint Studio preview looks good but FLO preview looks wrong, treat the case as renderer compatibility debugging first. Do not trust visual diff, anime artifact analysis, or cleanup evidence until FLO preview roughly matches Paint Studio preview.
 
+Source-grounded Paint Studio renderer:
+
+```bash
+python scripts/render_paintstudio_source_preview.py --case cases/case_0001 --ssaa 2
+```
+
+This renderer reads Paint Studio `geometry.json` directly and applies the source-confirmed background, layer order, Type 2, Type 16, Type 32, RGBA, and linear-light blending rules.
+
+Full notes:
+
+```text
+docs/paint_studio_source_renderer.md
+```
+
 Run:
 
 ```bash

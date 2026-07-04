@@ -5,6 +5,7 @@ from collections import Counter
 from pathlib import Path
 
 from engine.parser.paint_studio_geometry_parser import TYPE_TO_SHAPE, parse_paint_studio_geometry
+from engine.renderer.paint_studio_source_renderer import render_paint_studio_preview
 
 
 VARIANT_FILENAMES = {
@@ -14,6 +15,7 @@ VARIANT_FILENAMES = {
     "bgr_channel_test": "bgr_channel_test.png",
     "alpha_ignored_test": "alpha_ignored_test.png",
     "alpha_inverted_test": "alpha_inverted_test.png",
+    "source_grounded_renderer": "source_grounded_renderer.png",
 }
 
 
@@ -35,7 +37,7 @@ def diagnose_paint_studio_geometry(
     canvas_info = _canvas_info(source_image_path, paintstudio_preview_path)
 
     shape_stats = _shape_stats(raw_shapes, canvas_info)
-    variant_paths = _render_variants(layers, canvas_info, render_dir, geometry_file)
+    variant_paths, source_renderer_metadata = _render_variants(layers, canvas_info, render_dir, geometry_file)
     comparisons = _compare_variants(variant_paths, source_image_path, paintstudio_preview_path)
     warning = _renderer_warning(shape_stats, comparisons)
 
@@ -48,6 +50,7 @@ def diagnose_paint_studio_geometry(
         "likely_causes": _likely_causes(shape_stats, comparisons),
         "shape_diagnostics": shape_stats,
         "render_variants": variant_paths,
+        "source_grounded_renderer_metadata": source_renderer_metadata,
         "comparisons": comparisons,
         "notes": [
             "This diagnostic is read-only. It does not modify geometry or the default FLO renderer.",
@@ -172,7 +175,31 @@ def _render_variants(layers, image_info, render_dir, geometry_file):
         output_path = render_dir / VARIANT_FILENAMES[name]
         _render_layers_fast(variant_layers, image_info, output_path)
         paths[name] = str(output_path)
-    return paths
+
+    source_metadata = _render_source_grounded_variant(image_info, render_dir, geometry_file)
+    source_output = render_dir / VARIANT_FILENAMES["source_grounded_renderer"]
+    if source_output.exists():
+        paths["source_grounded_renderer"] = str(source_output)
+    return paths, source_metadata
+
+
+def _render_source_grounded_variant(image_info, render_dir, geometry_file):
+    size = image_info.get("size") or {}
+    output_path = render_dir / VARIANT_FILENAMES["source_grounded_renderer"]
+    try:
+        return render_paint_studio_preview(
+            str(geometry_file),
+            str(output_path),
+            width=int(size.get("width") or 0) or None,
+            height=int(size.get("height") or 0) or None,
+            ssaa=2,
+        )
+    except Exception as exc:
+        return {
+            "output_path": str(output_path),
+            "render_failed": True,
+            "error": str(exc),
+        }
 
 
 def _render_layers_fast(layers, image_info, output_path):
