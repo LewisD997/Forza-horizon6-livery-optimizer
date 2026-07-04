@@ -65,6 +65,8 @@ Defined actions:
 
 v0.6.1 only actively generates noop plans, with optional `mark_candidate` examples when explicitly requested.
 
+v0.6.2 adds `candidate_plan` mode. It still does not modify geometry, but it can generate real non-destructive `mark_candidate` entries for future cleanup review.
+
 ## Shape UID
 
 `shape_uid` is a deterministic short hash of shape index, type, data, color, and score. It is stored only in plan/report metadata, not inside `geometry.json`.
@@ -75,6 +77,12 @@ Generate a noop plan:
 
 ```bash
 python main.py --image cases/case_0001/source_full.png --input cases/case_0001/paintstudio_geometry.json --input-format paintstudio --report cases/case_0001/flo_report.json --output-geometry cases/case_0001/optimized_geometry.json --optimization-mode noop --plan-output cases/case_0001/optimization_plan.json --preview-renderer paintstudio-source
+```
+
+Generate a non-destructive candidate plan:
+
+```bash
+python main.py --image cases/case_0001/source_full.png --input cases/case_0001/paintstudio_geometry.json --input-format paintstudio --report cases/case_0001/flo_report.json --output-geometry cases/case_0001/optimized_geometry.json --optimization-mode candidate-plan --plan-output cases/case_0001/optimization_plan.json --preview-renderer paintstudio-source --max-candidates 100
 ```
 
 Validate a plan:

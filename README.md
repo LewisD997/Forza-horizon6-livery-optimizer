@@ -70,6 +70,14 @@ python scripts/validate_optimization_plan.py --plan cases/case_0001/optimization
 
 Supported planning flags include `--plan-output`, `--plan-input`, `--apply-plan`, `--dry-run-plan`, and `--include-mark-candidates`.
 
+v0.6.2 adds non-destructive candidate planning:
+
+```bash
+python main.py --image cases/case_0001/source_full.png --input cases/case_0001/paintstudio_geometry.json --input-format paintstudio --report cases/case_0001/flo_report.json --output-geometry cases/case_0001/optimized_geometry.json --optimization-mode candidate-plan --plan-output cases/case_0001/optimization_plan.json --preview-renderer paintstudio-source --max-candidates 100
+```
+
+Candidate plans only mark future cleanup candidates. They do not delete, update, or add shapes.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.

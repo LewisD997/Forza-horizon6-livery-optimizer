@@ -11,7 +11,7 @@ from engine.optimizer.suggestion_engine import (
 )
 from engine.optimizer.geometry_optimizer import optimize_geometry_noop
 from engine.optimizer.patch_applier import apply_optimization_plan
-from engine.optimizer.plan_generator import generate_noop_plan
+from engine.optimizer.plan_generator import generate_candidate_plan, generate_noop_plan
 from engine.output.optimized_geometry_writer import (
     OptimizedGeometryWriteError,
     write_optimized_geometry,
@@ -181,8 +181,8 @@ def run_geometry_output_pipeline(
     after_diff_path=None,
     preview_renderer="default",
 ):
-    if optimization_mode != "noop":
-        raise ValueError("--optimization-mode only supports noop in v0.6.0.")
+    if optimization_mode not in {"noop", "candidate-plan"}:
+        raise ValueError("--optimization-mode supports noop or candidate-plan.")
 
     geometry = _read_paintstudio_geometry(input_path)
     optimization_result = optimize_geometry_noop(geometry)
@@ -197,7 +197,7 @@ def run_geometry_output_pipeline(
         "optimizer_report": optimizer_report,
         "renderer_used": renderer_used,
         "preview_paths": preview_paths,
-        "tool_version": "v0.6.0",
+        "tool_version": "v0.6.2",
     }
 
     output_report = write_optimized_geometry(
@@ -238,12 +238,17 @@ def run_geometry_output_pipeline(
 
 def run_plan_pipeline(
     input_path,
+    analysis_report=None,
     output_geometry_path=None,
     plan_output_path=None,
     plan_input_path=None,
     apply_plan=False,
     dry_run_plan=False,
     include_mark_candidates=False,
+    optimization_mode="noop",
+    max_candidates=100,
+    min_candidate_score=0.35,
+    include_low_confidence=False,
     overwrite_output=False,
 ):
     geometry = _read_paintstudio_geometry(input_path)
@@ -259,21 +264,38 @@ def run_plan_pipeline(
 
     plan = None
     if plan_output_path:
-        plan = generate_noop_plan(
-            geometry,
-            str(input_path),
-            str(output_geometry_path) if output_geometry_path else None,
-            include_mark_candidates=include_mark_candidates,
-        )
+        if optimization_mode == "candidate-plan":
+            plan = generate_candidate_plan(
+                geometry,
+                str(input_path),
+                str(output_geometry_path) if output_geometry_path else None,
+                analysis_report=analysis_report,
+                options={
+                    "max_candidates": max_candidates,
+                    "min_candidate_score": min_candidate_score,
+                    "include_low_confidence": include_low_confidence,
+                },
+            )
+        else:
+            plan = generate_noop_plan(
+                geometry,
+                str(input_path),
+                str(output_geometry_path) if output_geometry_path else None,
+                include_mark_candidates=include_mark_candidates,
+            )
         write_optimization_plan(plan, plan_output_path, overwrite=overwrite_output)
         result["generated_plan_path"] = str(plan_output_path)
         result["proposed_change_count"] = plan["proposed_change_count"]
+        if "candidate_summary" in plan:
+            result["candidate_summary"] = plan["candidate_summary"]
 
     if plan_input_path:
         plan = read_optimization_plan(plan_input_path)
         validate_optimization_plan(plan, geometry=geometry)
         result["loaded_plan_path"] = str(plan_input_path)
         result["proposed_change_count"] = plan["proposed_change_count"]
+        if "candidate_summary" in plan:
+            result["candidate_summary"] = plan["candidate_summary"]
 
     should_apply = apply_plan or dry_run_plan
     if should_apply:
@@ -285,6 +307,7 @@ def run_plan_pipeline(
             dry_run=bool(dry_run_plan or not apply_plan),
         )
         result["applied_change_count"] = apply_result["applied_change_count"]
+        result["dry_run_change_count"] = apply_result.get("dry_run_change_count", 0)
         result["skipped_change_count"] = apply_result["skipped_change_count"]
         result["destructive_change_count"] = apply_result["destructive_change_count"]
         result["ledger"] = apply_result["ledger"]
@@ -335,9 +358,9 @@ def main():
     parser.add_argument("--output-geometry", help="Optional path to write optimized Paint Studio geometry.")
     parser.add_argument(
         "--optimization-mode",
-        choices=("noop",),
+        choices=("noop", "candidate-plan"),
         default="noop",
-        help="Optimization mode for --output-geometry. Default: noop.",
+        help="Optimization mode for --output-geometry or plan generation. Default: noop.",
     )
     parser.add_argument(
         "--overwrite-output",
@@ -362,6 +385,23 @@ def main():
         "--include-mark-candidates",
         action="store_true",
         help="Include example non-destructive mark_candidate entries in generated noop plans.",
+    )
+    parser.add_argument(
+        "--max-candidates",
+        type=int,
+        default=100,
+        help="Maximum cleanup candidates for --optimization-mode candidate-plan.",
+    )
+    parser.add_argument(
+        "--min-candidate-score",
+        type=float,
+        default=0.35,
+        help="Minimum score for candidate-plan mark_candidate entries.",
+    )
+    parser.add_argument(
+        "--include-low-confidence",
+        action="store_true",
+        help="Include candidate-plan entries below --min-candidate-score.",
     )
     parser.add_argument(
         "--preview-renderer",
@@ -411,12 +451,17 @@ def main():
         if plan_output_path or plan_input_path or args.apply_plan or args.dry_run_plan:
             plan_report = run_plan_pipeline(
                 input_path,
+                analysis_report=report,
                 output_geometry_path=output_geometry_path,
                 plan_output_path=plan_output_path,
                 plan_input_path=plan_input_path,
                 apply_plan=args.apply_plan,
                 dry_run_plan=args.dry_run_plan,
                 include_mark_candidates=args.include_mark_candidates,
+                optimization_mode=args.optimization_mode,
+                max_candidates=args.max_candidates,
+                min_candidate_score=args.min_candidate_score,
+                include_low_confidence=args.include_low_confidence,
                 overwrite_output=args.overwrite_output,
             )
             report["optimization_plan"] = plan_report

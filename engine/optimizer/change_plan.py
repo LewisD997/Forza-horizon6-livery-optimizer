@@ -3,11 +3,21 @@ import json
 from datetime import datetime, timezone
 
 
-PLAN_VERSION = "0.6.1"
+PLAN_VERSION = "0.6.2"
 SUPPORTED_ACTIONS = {"noop", "mark_candidate", "remove_shape", "update_shape", "add_shape"}
 SAFE_ACTIONS = {"noop", "mark_candidate"}
-RISK_LEVELS = {"none", "low", "medium", "high"}
+RISK_LEVELS = {"none", "review_only", "low", "medium", "high"}
 STATUSES = {"proposed", "applied", "skipped", "dry_run"}
+
+CANDIDATE_TYPES = {
+    "low_alpha_large_soft_shape",
+    "tiny_fragment_cluster_member",
+    "ellipse_cluster_member",
+    "high_diff_overlap_member",
+    "background_or_near_background_shape",
+    "duplicate_like_shape",
+    "unknown_review_candidate",
+}
 
 
 def make_shape_uid(shape: dict, index: int) -> str:

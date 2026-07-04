@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from engine.optimizer.change_plan import (
+    CANDIDATE_TYPES,
     RISK_LEVELS,
     STATUSES,
     SUPPORTED_ACTIONS,
@@ -69,7 +70,7 @@ def validate_optimization_plan(plan, geometry=None, allow_destructive=False):
     missing = sorted(REQUIRED_PLAN_FIELDS - set(plan))
     if missing:
         raise OptimizationPlanError(f"Optimization plan missing required fields: {missing}")
-    if plan.get("safety_level") not in {"safe", "review_required", "destructive"}:
+    if plan.get("safety_level") not in {"safe", "non_destructive", "review_required", "destructive"}:
         raise OptimizationPlanError("Invalid plan safety_level.")
     changes = plan.get("changes")
     if not isinstance(changes, list):
@@ -97,6 +98,8 @@ def _validate_change(change, index, shapes, allow_destructive):
         raise OptimizationPlanError(f"Change {index} has unsupported action: {action}")
     if action in {"remove_shape", "update_shape", "add_shape"} and not allow_destructive:
         raise OptimizationPlanError(f"Destructive change is not allowed by default: {action}")
+    if action == "mark_candidate":
+        _validate_mark_candidate(change, index)
     if change.get("risk_level") not in RISK_LEVELS:
         raise OptimizationPlanError(f"Change {index} has invalid risk_level.")
     if change.get("status") not in STATUSES:
@@ -108,3 +111,27 @@ def _validate_change(change, index, shapes, allow_destructive):
         expected_uid = make_shape_uid(shapes[shape_index], shape_index)
         if change.get("shape_uid") and change.get("shape_uid") != expected_uid:
             raise OptimizationPlanError(f"Change {index} shape_uid does not match geometry.")
+
+
+def _validate_mark_candidate(change, index):
+    if change.get("risk_level") not in {"review_only", "low"}:
+        raise OptimizationPlanError(f"Change {index} mark_candidate risk must be review_only or low.")
+    metadata = change.get("metadata")
+    if not isinstance(metadata, dict):
+        raise OptimizationPlanError(f"Change {index} mark_candidate metadata must be an object.")
+    required = {
+        "candidate_type",
+        "candidate_score",
+        "artifact_reasons",
+        "recommendation",
+        "human_review_required",
+    }
+    missing = sorted(required - set(metadata))
+    if missing:
+        raise OptimizationPlanError(f"Change {index} mark_candidate metadata missing: {missing}")
+    if metadata.get("candidate_type") not in CANDIDATE_TYPES:
+        raise OptimizationPlanError(f"Change {index} has invalid candidate_type.")
+    if metadata.get("recommendation") != "review_before_cleanup":
+        raise OptimizationPlanError(f"Change {index} has invalid recommendation.")
+    if metadata.get("human_review_required") is not True:
+        raise OptimizationPlanError(f"Change {index} must require human review.")

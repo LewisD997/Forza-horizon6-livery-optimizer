@@ -12,6 +12,7 @@ def apply_optimization_plan(
     modified_geometry = copy.deepcopy(geometry)
     ledger = []
     applied = 0
+    dry_run_count = 0
     skipped = 0
     destructive = 0
 
@@ -30,7 +31,10 @@ def apply_optimization_plan(
         if action in SAFE_ACTIONS:
             entry["status"] = "dry_run" if dry_run else "applied"
             entry["reason"] = f"{action} does not modify geometry."
-            applied += 1
+            if dry_run:
+                dry_run_count += 1
+            else:
+                applied += 1
         elif action in {"remove_shape", "update_shape", "add_shape"}:
             destructive += 1
             if not allow_destructive:
@@ -45,6 +49,7 @@ def apply_optimization_plan(
 
     return {
         "applied_change_count": applied,
+        "dry_run_change_count": dry_run_count,
         "skipped_change_count": skipped,
         "destructive_change_count": destructive,
         "modified_geometry": modified_geometry,

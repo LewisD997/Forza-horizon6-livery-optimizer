@@ -277,6 +277,34 @@ Full notes:
 docs/optimization_plan_and_patch_ledger.md
 ```
 
+## Non-Destructive Candidate Planner
+
+FLO v0.6.2 can generate review-only cleanup candidates:
+
+```bash
+python main.py --image cases/case_0001/source_full.png --input cases/case_0001/paintstudio_geometry.json --input-format paintstudio --report cases/case_0001/flo_report.json --output-geometry cases/case_0001/optimized_geometry.json --optimization-mode candidate-plan --plan-output cases/case_0001/optimization_plan.json --preview-renderer paintstudio-source --max-candidates 100
+```
+
+Options:
+
+```text
+--max-candidates
+--min-candidate-score
+--include-low-confidence
+```
+
+Test:
+
+```bash
+python scripts/test_candidate_planner.py
+```
+
+Full notes:
+
+```text
+docs/non_destructive_candidate_planner.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.
