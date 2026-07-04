@@ -16,6 +16,9 @@ VARIANT_FILENAMES = {
     "alpha_ignored_test": "alpha_ignored_test.png",
     "alpha_inverted_test": "alpha_inverted_test.png",
     "source_grounded_renderer": "source_grounded_renderer.png",
+    "source_grounded_full_canvas_opaque": "source_grounded_full_canvas_opaque.png",
+    "source_grounded_full_canvas_transparent": "source_grounded_full_canvas_transparent.png",
+    "source_grounded_cropped_transparent": "source_grounded_cropped_transparent.png",
 }
 
 
@@ -176,30 +179,47 @@ def _render_variants(layers, image_info, render_dir, geometry_file):
         _render_layers_fast(variant_layers, image_info, output_path)
         paths[name] = str(output_path)
 
-    source_metadata = _render_source_grounded_variant(image_info, render_dir, geometry_file)
-    source_output = render_dir / VARIANT_FILENAMES["source_grounded_renderer"]
-    if source_output.exists():
-        paths["source_grounded_renderer"] = str(source_output)
+    source_metadata = _render_source_grounded_variants(image_info, render_dir, geometry_file)
+    for name in (
+        "source_grounded_renderer",
+        "source_grounded_full_canvas_opaque",
+        "source_grounded_full_canvas_transparent",
+        "source_grounded_cropped_transparent",
+    ):
+        source_output = render_dir / VARIANT_FILENAMES[name]
+        if source_output.exists():
+            paths[name] = str(source_output)
     return paths, source_metadata
 
 
-def _render_source_grounded_variant(image_info, render_dir, geometry_file):
+def _render_source_grounded_variants(image_info, render_dir, geometry_file):
     size = image_info.get("size") or {}
-    output_path = render_dir / VARIANT_FILENAMES["source_grounded_renderer"]
-    try:
-        return render_paint_studio_preview(
-            str(geometry_file),
-            str(output_path),
-            width=int(size.get("width") or 0) or None,
-            height=int(size.get("height") or 0) or None,
-            ssaa=2,
-        )
-    except Exception as exc:
-        return {
-            "output_path": str(output_path),
-            "render_failed": True,
-            "error": str(exc),
-        }
+    variants = {
+        "source_grounded_renderer": ("full_canvas_opaque", 0),
+        "source_grounded_full_canvas_opaque": ("full_canvas_opaque", 0),
+        "source_grounded_full_canvas_transparent": ("full_canvas_transparent", 0),
+        "source_grounded_cropped_transparent": ("cropped_transparent", 0),
+    }
+    results = {}
+    for name, (export_mode, padding) in variants.items():
+        output_path = render_dir / VARIANT_FILENAMES[name]
+        try:
+            results[name] = render_paint_studio_preview(
+                str(geometry_file),
+                str(output_path),
+                width=int(size.get("width") or 0) or None,
+                height=int(size.get("height") or 0) or None,
+                ssaa=2,
+                export_mode=export_mode,
+                padding=padding,
+            )
+        except Exception as exc:
+            results[name] = {
+                "output_path": str(output_path),
+                "render_failed": True,
+                "error": str(exc),
+            }
+    return results
 
 
 def _render_layers_fast(layers, image_info, output_path):

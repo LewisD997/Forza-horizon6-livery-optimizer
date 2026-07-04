@@ -19,8 +19,17 @@ database/paint_studio_geometry_semantics.json
 - It handles Type 2 and Type 16 as center-based geometry.
 - It renders Type 32 triangles from exact vertex points.
 - It uses RGBA color semantics with straight alpha.
-- It composites in linear light, then saves an RGB PNG.
+- It composites in linear light, then saves an RGBA PNG.
 - It supports simple SSAA with `--ssaa 1`, `--ssaa 2`, or `--ssaa 4`.
+
+v0.5.10 adds export alignment modes:
+
+- `full_canvas_opaque`
+- `full_canvas_transparent`
+- `cropped_transparent`
+- `cropped_transparent_with_padding`
+
+These modes are for comparing FLO output against Paint Studio library preview exports, which may be transparent or cropped.
 
 ## Source-Confirmed Shape Semantics
 
@@ -56,6 +65,18 @@ Type 32 Triangle:
 python scripts/render_paintstudio_source_preview.py --case cases/case_0001 --ssaa 2
 ```
 
+Export-alignment example:
+
+```bash
+python scripts/render_paintstudio_source_preview.py --case cases/case_0001 --ssaa 4 --export-mode cropped_transparent --make-side-by-side
+```
+
+Run all export variants:
+
+```bash
+python scripts/render_paintstudio_source_preview.py --case cases/case_0001 --ssaa 4 --run-export-variants
+```
+
 It writes:
 
 ```text
@@ -85,3 +106,9 @@ Remaining mismatch can still come from:
 - any shape types not implemented in v0.5.9
 
 This version does not modify geometry and does not perform Anime Cleanup.
+
+Export alignment notes:
+
+```text
+docs/paint_studio_preview_export_alignment.md
+```

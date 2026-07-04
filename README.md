@@ -52,6 +52,14 @@ python scripts/render_paintstudio_source_preview.py --case cases/case_0001 --ssa
 
 This creates `source_grounded` preview outputs under the case folder and uses Paint Studio source-confirmed semantics for background, layer order, center-based rectangles/ellipses, triangle vertices, RGBA color, and linear-light alpha blending.
 
+For Paint Studio preview export alignment variants:
+
+```bash
+python scripts/render_paintstudio_source_preview.py --case cases/case_0001 --ssaa 4 --run-export-variants
+```
+
+This compares full-canvas and cropped transparent exports when a Paint Studio `preview.png` is available, and writes more readable diff images.
+
 Run the renderer diagnostic on a prepared case:
 
 ```bash

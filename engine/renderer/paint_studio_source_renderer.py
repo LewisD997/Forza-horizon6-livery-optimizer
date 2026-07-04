@@ -2,11 +2,20 @@ import json
 import math
 from pathlib import Path
 
+from engine.renderer.export_alignment import crop_to_bbox, get_alpha_bbox
+
 
 TYPE_RECTANGLE = 1
 TYPE_ROTATED_RECTANGLE = 2
 TYPE_ROTATED_ELLIPSE = 16
 TYPE_TRIANGLE = 32
+
+EXPORT_MODES = {
+    "full_canvas_opaque",
+    "full_canvas_transparent",
+    "cropped_transparent",
+    "cropped_transparent_with_padding",
+}
 
 
 class PaintStudioSourceRenderError(Exception):
@@ -20,6 +29,8 @@ def render_paint_studio_preview(
     height: int | None = None,
     ssaa: int = 2,
     background_mode: str = "paintstudio",
+    export_mode: str | None = None,
+    padding: int = 0,
 ) -> dict:
     try:
         from PIL import Image, ImageDraw
@@ -31,6 +42,12 @@ def render_paint_studio_preview(
 
     if ssaa not in {1, 2, 4}:
         raise PaintStudioSourceRenderError("--ssaa must be 1, 2, or 4.")
+    resolved_export_mode = _resolve_export_mode(background_mode, export_mode)
+    if resolved_export_mode not in EXPORT_MODES:
+        raise PaintStudioSourceRenderError(
+            "--export-mode must be full_canvas_opaque, full_canvas_transparent, "
+            "cropped_transparent, or cropped_transparent_with_padding."
+        )
 
     geometry_file = Path(geometry_path)
     geometry = _load_geometry(geometry_file)
@@ -43,14 +60,14 @@ def render_paint_studio_preview(
         Image,
     )
 
-    canvas = _initial_canvas(shapes, canvas_width, canvas_height, background_mode, np)
+    canvas = _initial_canvas(shapes, canvas_width, canvas_height, resolved_export_mode, np)
 
     unsupported = {}
     rendered = 0
     skipped = 0
 
     for index, shape in enumerate(shapes):
-        if index == 0 and background_mode == "paintstudio":
+        if index == 0:
             skipped += 1
             continue
 
@@ -85,7 +102,17 @@ def render_paint_studio_preview(
         _blend(canvas, coverage, color, alpha, np)
         rendered += 1
 
-    image = _linear_canvas_to_image(canvas, np, Image)
+    full_image = _linear_canvas_to_image(canvas, np, Image)
+    alpha_bbox = get_alpha_bbox(full_image)
+    crop_bbox = None
+    image = full_image
+    if resolved_export_mode == "cropped_transparent":
+        crop_bbox = alpha_bbox
+        image = crop_to_bbox(full_image, crop_bbox, padding=0)
+    elif resolved_export_mode == "cropped_transparent_with_padding":
+        crop_bbox = alpha_bbox
+        image = crop_to_bbox(full_image, crop_bbox, padding=max(0, int(padding)))
+
     output_file = Path(output_path)
     output_file.parent.mkdir(parents=True, exist_ok=True)
     image.save(output_file)
@@ -102,8 +129,13 @@ def render_paint_studio_preview(
         "skipped_shape_count": skipped,
         "unsupported_shape_types": unsupported,
         "ssaa": ssaa,
-        "blending_mode": "linear_light_source_over_rgb_output",
-        "background_handling": background_mode,
+        "blending_mode": "linear_light_source_over_straight_alpha_rgba_output",
+        "background_handling": _background_description(resolved_export_mode),
+        "export_mode": resolved_export_mode,
+        "padding": max(0, int(padding)),
+        "alpha_bbox": _bbox_dict(alpha_bbox),
+        "crop_bbox": _bbox_dict(crop_bbox),
+        "output_size": {"width": image.size[0], "height": image.size[1]},
         "warnings": warnings,
     }
 
@@ -122,6 +154,16 @@ def linear_to_srgb(value):
 
 def source_over_linear(dst_linear, src_linear, effective_alpha):
     return src_linear * effective_alpha + dst_linear * (1.0 - effective_alpha)
+
+
+def _resolve_export_mode(background_mode, export_mode):
+    if export_mode:
+        return export_mode
+    if background_mode == "paintstudio":
+        return "full_canvas_opaque"
+    if background_mode == "transparent":
+        return "full_canvas_transparent"
+    return background_mode
 
 
 def _load_geometry(path):
@@ -177,19 +219,17 @@ def _resolve_canvas_size(geometry_file, geometry, width, height, image_module):
     )
 
 
-def _initial_canvas(shapes, width, height, background_mode, np):
-    if background_mode != "paintstudio":
-        raise PaintStudioSourceRenderError("Only background_mode='paintstudio' is supported in v0.5.9.")
-
-    color = [255, 255, 255, 255]
-    if shapes and isinstance(shapes[0], dict) and isinstance(shapes[0].get("color"), list):
-        color = shapes[0]["color"]
-
-    rgb = _srgb_color_to_linear(color, np)
-    canvas = np.zeros((height, width, 3), dtype=np.float32)
-    canvas[:, :, 0] = rgb[0]
-    canvas[:, :, 1] = rgb[1]
-    canvas[:, :, 2] = rgb[2]
+def _initial_canvas(shapes, width, height, export_mode, np):
+    canvas = np.zeros((height, width, 4), dtype=np.float32)
+    if export_mode == "full_canvas_opaque":
+        color = [255, 255, 255, 255]
+        if shapes and isinstance(shapes[0], dict) and isinstance(shapes[0].get("color"), list):
+            color = shapes[0]["color"]
+        rgb = _srgb_color_to_linear(color, np)
+        canvas[:, :, 0] = rgb[0]
+        canvas[:, :, 1] = rgb[1]
+        canvas[:, :, 2] = rgb[2]
+        canvas[:, :, 3] = 1.0
     return canvas
 
 
@@ -341,14 +381,26 @@ def _blend(canvas, coverage, color, alpha, np):
     region = canvas[y0 : y0 + height, x0 : x0 + width, :]
     effective_alpha = (mask * alpha).astype(np.float32)
     src = _srgb_color_to_linear(color, np).reshape((1, 1, 3))
-    region[:] = source_over_linear(region, src, effective_alpha[:, :, None])
+    dst_rgb = region[:, :, :3]
+    dst_alpha = region[:, :, 3]
+    src_alpha = effective_alpha
+    out_alpha = src_alpha + dst_alpha * (1.0 - src_alpha)
+    src_premul = src * src_alpha[:, :, None]
+    dst_premul = dst_rgb * dst_alpha[:, :, None]
+    out_premul = src_premul + dst_premul * (1.0 - src_alpha[:, :, None])
+    with np.errstate(divide="ignore", invalid="ignore"):
+        out_rgb = np.where(out_alpha[:, :, None] > 0, out_premul / out_alpha[:, :, None], 0.0)
+    region[:, :, :3] = out_rgb
+    region[:, :, 3] = out_alpha
 
 
 def _linear_canvas_to_image(canvas, np, image_module):
     vectorized = np.vectorize(linear_to_srgb)
-    srgb = vectorized(np.clip(canvas, 0.0, 1.0))
+    srgb = vectorized(np.clip(canvas[:, :, :3], 0.0, 1.0))
     bytes_rgb = np.clip(np.rint(srgb * 255.0), 0, 255).astype("uint8")
-    return image_module.fromarray(bytes_rgb, "RGB")
+    alpha = np.clip(np.rint(canvas[:, :, 3] * 255.0), 0, 255).astype("uint8")
+    rgba = np.dstack((bytes_rgb, alpha))
+    return image_module.fromarray(rgba, "RGBA")
 
 
 def _srgb_color_to_linear(color, np):
@@ -381,3 +433,27 @@ def _int(value):
         return int(value)
     except (TypeError, ValueError):
         return 0
+
+
+def _background_description(export_mode):
+    if export_mode == "full_canvas_opaque":
+        return "shape_0_rgb_opaque_full_canvas"
+    if export_mode == "full_canvas_transparent":
+        return "transparent_full_canvas_shape_0_skipped"
+    if export_mode == "cropped_transparent":
+        return "transparent_canvas_cropped_to_alpha_bbox"
+    return "transparent_canvas_cropped_to_alpha_bbox_with_padding"
+
+
+def _bbox_dict(bbox):
+    if bbox is None:
+        return None
+    left, top, right, bottom = bbox
+    return {
+        "x": left,
+        "y": top,
+        "width": right - left,
+        "height": bottom - top,
+        "right": right,
+        "bottom": bottom,
+    }

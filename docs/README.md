@@ -247,6 +247,20 @@ Full notes:
 docs/paint_studio_source_renderer.md
 ```
 
+Export alignment variants:
+
+```bash
+python scripts/render_paintstudio_source_preview.py --case cases/case_0001 --ssaa 4 --run-export-variants
+```
+
+This writes full-canvas, transparent, cropped, and padded cropped render variants plus human-friendly diff images when a Paint Studio preview is available.
+
+Export alignment notes:
+
+```text
+docs/paint_studio_preview_export_alignment.md
+```
+
 Run:
 
 ```bash
