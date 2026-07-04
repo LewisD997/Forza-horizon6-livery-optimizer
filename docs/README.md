@@ -247,6 +247,36 @@ Noop mode intentionally makes no geometry changes. Full notes:
 docs/optimized_geometry_output.md
 ```
 
+## Optimization Plans
+
+FLO v0.6.1 can write and validate a safe optimization plan / patch ledger:
+
+```bash
+python main.py --image cases/case_0001/source_full.png --input cases/case_0001/paintstudio_geometry.json --input-format paintstudio --report cases/case_0001/flo_report.json --output-geometry cases/case_0001/optimized_geometry.json --optimization-mode noop --plan-output cases/case_0001/optimization_plan.json --preview-renderer paintstudio-source
+```
+
+Plan validation:
+
+```bash
+python scripts/validate_optimization_plan.py --plan cases/case_0001/optimization_plan.json --geometry cases/case_0001/paintstudio_geometry.json
+```
+
+CLI flags:
+
+```text
+--plan-output
+--plan-input
+--apply-plan
+--dry-run-plan
+--include-mark-candidates
+```
+
+Full notes:
+
+```text
+docs/optimization_plan_and_patch_ledger.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.

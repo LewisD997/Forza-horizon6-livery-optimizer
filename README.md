@@ -54,6 +54,22 @@ python main.py --image cases/case_0001/source_full.png --input cases/case_0001/p
 python scripts/validate_optimized_geometry.py --input cases/case_0001/paintstudio_geometry.json --output cases/case_0001/optimized_geometry.json
 ```
 
+## Optimization Plans
+
+FLO v0.6.1 can write a safe optimization plan / patch ledger before any real geometry changes happen:
+
+```bash
+python main.py --image cases/case_0001/source_full.png --input cases/case_0001/paintstudio_geometry.json --input-format paintstudio --report cases/case_0001/flo_report.json --output-geometry cases/case_0001/optimized_geometry.json --optimization-mode noop --plan-output cases/case_0001/optimization_plan.json --preview-renderer paintstudio-source
+```
+
+Validate a plan:
+
+```bash
+python scripts/validate_optimization_plan.py --plan cases/case_0001/optimization_plan.json --geometry cases/case_0001/paintstudio_geometry.json
+```
+
+Supported planning flags include `--plan-output`, `--plan-input`, `--apply-plan`, `--dry-run-plan`, and `--include-mark-candidates`.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.
