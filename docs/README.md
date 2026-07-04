@@ -227,6 +227,26 @@ python scripts/validate_case_library.py
 
 This is still diagnostic-only. FLO does not automatically clean up or rewrite geometry.
 
+## Safe Optimized Geometry Output
+
+FLO v0.6.0 can write a separate Paint Studio `optimized_geometry.json` in safe noop mode:
+
+```bash
+python main.py --image cases/case_0001/source_full.png --input cases/case_0001/paintstudio_geometry.json --input-format paintstudio --report cases/case_0001/flo_report.json --preview cases/case_0001/flo_preview.png --diff cases/case_0001/flo_diff.png --output-geometry cases/case_0001/optimized_geometry.json --optimization-mode noop --after-preview cases/case_0001/optimized_preview.png --after-diff cases/case_0001/optimized_diff.png --preview-renderer paintstudio-source
+```
+
+Validate the output:
+
+```bash
+python scripts/validate_optimized_geometry.py --input cases/case_0001/paintstudio_geometry.json --output cases/case_0001/optimized_geometry.json
+```
+
+Noop mode intentionally makes no geometry changes. Full notes:
+
+```text
+docs/optimized_geometry_output.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.

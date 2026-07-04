@@ -1,4 +1,5 @@
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -8,6 +9,11 @@ from engine.optimizer.suggestion_engine import (
     generate_optimization_suggestions,
     summarize_suggestions,
 )
+from engine.optimizer.geometry_optimizer import optimize_geometry_noop
+from engine.output.optimized_geometry_writer import (
+    OptimizedGeometryWriteError,
+    write_optimized_geometry,
+)
 from engine.parser.jsdn_parser import JsdnParseError, parse_jsdn
 from engine.parser.paint_studio_geometry_parser import (
     PaintStudioGeometryParseError,
@@ -15,6 +21,10 @@ from engine.parser.paint_studio_geometry_parser import (
     parse_paint_studio_geometry,
 )
 from engine.renderer.preview_renderer import PreviewRenderError, render_preview
+from engine.renderer.paint_studio_source_renderer import (
+    PaintStudioSourceRenderError,
+    render_paint_studio_preview,
+)
 from engine.reports.training_case_logger import write_training_cases
 from engine.reports.report_writer import write_report
 from engine.knowledge.primitive_kb import is_known_primitive
@@ -22,7 +32,14 @@ from engine.vision.image_inspector import inspect_reference_image
 from engine.vision.visual_diff import VisualDiffError, compare_images
 
 
-def build_report(image_path, input_path, preview_path=None, diff_path=None, input_format="auto"):
+def build_report(
+    image_path,
+    input_path,
+    preview_path=None,
+    diff_path=None,
+    input_format="auto",
+    preview_renderer="default",
+):
     layers, resolved_input_format = parse_input_layers(input_path, input_format)
     image_info = inspect_reference_image(image_path)
     analysis = analyze_layers(layers, image_info)
@@ -32,7 +49,14 @@ def build_report(image_path, input_path, preview_path=None, diff_path=None, inpu
     visual_diff = None
 
     if preview_path:
-        preview_result = render_preview(layers, image_info, preview_path)
+        preview_result = render_livery_preview(
+            layers,
+            image_info,
+            preview_path,
+            input_path,
+            resolved_input_format,
+            preview_renderer,
+        )
         rendered_preview_path = preview_result["preview_path"]
         notes.extend(preview_result["notes"])
 
@@ -67,6 +91,35 @@ def build_report(image_path, input_path, preview_path=None, diff_path=None, inpu
         "suspected_messy_regions": analysis["suspected_messy_regions"],
         "estimated_removable_layers": analysis["estimated_removable_layers"],
         "notes": notes,
+    }
+
+
+def render_livery_preview(
+    layers,
+    image_info,
+    preview_path,
+    input_path,
+    resolved_input_format,
+    preview_renderer="default",
+):
+    if preview_renderer == "default":
+        return render_preview(layers, image_info, preview_path)
+    if preview_renderer != "paintstudio-source":
+        raise ValueError("--preview-renderer must be default or paintstudio-source.")
+    if resolved_input_format != "paintstudio_geometry":
+        raise ValueError("--preview-renderer paintstudio-source requires Paint Studio geometry input.")
+    result = render_paint_studio_preview(
+        str(input_path),
+        str(preview_path),
+        export_mode="full_canvas_opaque",
+    )
+    return {
+        "preview_path": result["output_path"],
+        "notes": [
+            "Preview rendered with source-grounded Paint Studio renderer.",
+            *[f"Paint Studio source renderer warning: {warning}" for warning in result.get("warnings", [])],
+        ],
+        "metadata": result,
     }
 
 
@@ -110,6 +163,96 @@ def _unknown_primitives(layers):
     return unknown
 
 
+def run_geometry_output_pipeline(
+    input_path,
+    image_path,
+    output_geometry_path,
+    optimization_mode,
+    overwrite_output=False,
+    after_preview_path=None,
+    after_diff_path=None,
+    preview_renderer="default",
+):
+    if optimization_mode != "noop":
+        raise ValueError("--optimization-mode only supports noop in v0.6.0.")
+
+    geometry = _read_paintstudio_geometry(input_path)
+    optimization_result = optimize_geometry_noop(geometry)
+    optimized_geometry = optimization_result["geometry"]
+    optimizer_report = optimization_result["report"]
+    preview_paths = {}
+    renderer_used = preview_renderer
+
+    write_report_metadata = {
+        "optimization_mode": optimization_mode,
+        "safety_level": "safe",
+        "optimizer_report": optimizer_report,
+        "renderer_used": renderer_used,
+        "preview_paths": preview_paths,
+        "tool_version": "v0.6.0",
+    }
+
+    output_report = write_optimized_geometry(
+        str(input_path),
+        str(output_geometry_path),
+        shapes=optimized_geometry.get("shapes"),
+        metadata=write_report_metadata,
+        overwrite=overwrite_output,
+    )
+
+    if after_preview_path:
+        if preview_renderer != "paintstudio-source":
+            raise ValueError("v0.6.0 after-preview currently requires --preview-renderer paintstudio-source.")
+        render_result = render_paint_studio_preview(
+            str(output_geometry_path),
+            str(after_preview_path),
+            width=_image_width(image_path),
+            height=_image_height(image_path),
+            export_mode="full_canvas_opaque",
+        )
+        preview_paths["after_preview"] = render_result["output_path"]
+
+    if after_diff_path:
+        if not after_preview_path:
+            raise ValueError("--after-diff requires --after-preview.")
+        after_diff = compare_images(image_path, after_preview_path, after_diff_path)
+        preview_paths["after_diff"] = after_diff["diff_path"]
+        output_report["after_visual_diff"] = after_diff
+
+    if preview_paths:
+        output_report["preview_paths"] = preview_paths
+        report_path = Path(output_geometry_path).with_name(
+            f"{Path(output_geometry_path).stem}_optimization_report.json"
+        )
+        write_report(output_report, report_path)
+    return output_report
+
+
+def _read_paintstudio_geometry(path):
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        raise ValueError(f"Invalid Paint Studio geometry JSON: {path}") from exc
+    if not looks_like_paint_studio_geometry(data):
+        raise ValueError("--output-geometry requires Paint Studio geometry input.")
+    return data
+
+
+def _image_width(path):
+    return _image_size(path)[0]
+
+
+def _image_height(path):
+    return _image_size(path)[1]
+
+
+def _image_size(path):
+    from PIL import Image
+
+    with Image.open(path) as image:
+        return image.size
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="FLO analyzes generated Forza livery files against an original image target."
@@ -125,6 +268,26 @@ def main():
     parser.add_argument("--report", required=True, help="Path to the JSON report output.")
     parser.add_argument("--preview", help="Optional path to write a rendered PNG preview.")
     parser.add_argument("--diff", help="Optional path to write a PNG visual diff.")
+    parser.add_argument("--output-geometry", help="Optional path to write optimized Paint Studio geometry.")
+    parser.add_argument(
+        "--optimization-mode",
+        choices=("noop",),
+        default="noop",
+        help="Optimization mode for --output-geometry. Default: noop.",
+    )
+    parser.add_argument(
+        "--overwrite-output",
+        action="store_true",
+        help="Allow replacing an existing --output-geometry file.",
+    )
+    parser.add_argument("--after-preview", help="Optional preview path for optimized geometry.")
+    parser.add_argument("--after-diff", help="Optional diff path for optimized geometry preview.")
+    parser.add_argument(
+        "--preview-renderer",
+        choices=("default", "paintstudio-source"),
+        default="default",
+        help="Renderer to use for previews. Default: default.",
+    )
     parser.add_argument(
         "--log-training-cases",
         action="store_true",
@@ -137,13 +300,37 @@ def main():
     report_path = Path(args.report)
     preview_path = Path(args.preview) if args.preview else None
     diff_path = Path(args.diff) if args.diff else None
+    output_geometry_path = Path(args.output_geometry) if args.output_geometry else None
+    after_preview_path = Path(args.after_preview) if args.after_preview else None
+    after_diff_path = Path(args.after_diff) if args.after_diff else None
 
     try:
-        report = build_report(image_path, input_path, preview_path, diff_path, args.input_format)
+        report = build_report(
+            image_path,
+            input_path,
+            preview_path,
+            diff_path,
+            args.input_format,
+            args.preview_renderer,
+        )
+        if output_geometry_path:
+            optimization_report = run_geometry_output_pipeline(
+                input_path,
+                image_path,
+                output_geometry_path,
+                args.optimization_mode,
+                overwrite_output=args.overwrite_output,
+                after_preview_path=after_preview_path,
+                after_diff_path=after_diff_path,
+                preview_renderer=args.preview_renderer,
+            )
+            report["optimized_geometry"] = optimization_report
     except (
         JsdnParseError,
         PaintStudioGeometryParseError,
         PreviewRenderError,
+        PaintStudioSourceRenderError,
+        OptimizedGeometryWriteError,
         VisualDiffError,
         FileNotFoundError,
         ValueError,
@@ -157,6 +344,12 @@ def main():
         print(f"Preview written to {preview_path}")
     if diff_path:
         print(f"Diff written to {diff_path}")
+    if output_geometry_path:
+        print(f"Optimized geometry written to {output_geometry_path}")
+    if after_preview_path:
+        print(f"Optimized preview written to {after_preview_path}")
+    if after_diff_path:
+        print(f"Optimized diff written to {after_diff_path}")
     if args.log_training_cases:
         case_path = write_training_cases(
             image_path,
