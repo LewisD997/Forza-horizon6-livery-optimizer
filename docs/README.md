@@ -305,6 +305,26 @@ Full notes:
 docs/non_destructive_candidate_planner.md
 ```
 
+## Candidate Review Visualization
+
+FLO v0.6.3 can render review images from `optimization_plan.json`:
+
+```bash
+python scripts/render_candidate_review.py --case cases/case_0001 --top-n 50
+```
+
+It writes candidate overlays, contact sheets, crops, a review CSV, and an index under:
+
+```text
+cases/case_0001/candidate_review/
+```
+
+Full notes:
+
+```text
+docs/candidate_review_visualization.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.

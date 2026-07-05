@@ -78,6 +78,14 @@ python main.py --image cases/case_0001/source_full.png --input cases/case_0001/p
 
 Candidate plans only mark future cleanup candidates. They do not delete, update, or add shapes.
 
+Render candidate review images:
+
+```bash
+python scripts/render_candidate_review.py --case cases/case_0001 --top-n 50
+```
+
+This writes overlays, contact sheets, crops, a CSV table, and a review index under `cases/case_0001/candidate_review/`.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.
