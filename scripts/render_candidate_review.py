@@ -52,6 +52,9 @@ def render_review(args):
 
     plan = _load_json(plan_path)
     geometry = _load_json(geometry_path)
+    feedback_path = output_dir / "candidate_feedback.json"
+    feedback = _load_json(feedback_path) if feedback_path.exists() else None
+    feedback_by_id = _feedback_by_id(feedback)
     output_dir.mkdir(parents=True, exist_ok=True)
     filter_suffix = _filter_suffix(args.candidate_type, args.risk_level) if (args.candidate_type or args.risk_level) else None
 
@@ -60,6 +63,7 @@ def render_review(args):
         "crop_padding": args.crop_padding,
         "candidate_type": args.candidate_type,
         "risk_level": args.risk_level,
+        "feedback_by_id": feedback_by_id,
     }
     output_paths = {}
     rendered_total = 0
@@ -147,6 +151,7 @@ def render_review(args):
             "skipped_candidates": skipped_total,
         },
         warnings=[],
+        feedback=feedback,
     )
     return {
         "output_dir": str(output_dir),
@@ -176,6 +181,12 @@ def _load_json(path):
         return json.loads(Path(path).read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         raise ValueError(f"Invalid JSON: {path}") from exc
+
+
+def _feedback_by_id(feedback):
+    if not isinstance(feedback, dict):
+        return {}
+    return {item.get("change_id"): item for item in feedback.get("items", []) if item.get("change_id")}
 
 
 def _filter_suffix(candidate_type, risk_level):

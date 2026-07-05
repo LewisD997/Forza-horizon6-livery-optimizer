@@ -86,6 +86,17 @@ python scripts/render_candidate_review.py --case cases/case_0001 --top-n 50
 
 This writes overlays, contact sheets, crops, a CSV table, and a review index under `cases/case_0001/candidate_review/`.
 
+Record human feedback for candidates:
+
+```bash
+python scripts/create_candidate_feedback_template.py --case cases/case_0001
+python scripts/update_candidate_feedback.py --feedback cases/case_0001/candidate_review/candidate_feedback.json --change-id C0001 --status unsure --note "Initial placeholder review"
+python scripts/validate_candidate_feedback.py --feedback cases/case_0001/candidate_review/candidate_feedback.json --plan cases/case_0001/optimization_plan.json
+python scripts/summarize_candidate_feedback.py --feedback cases/case_0001/candidate_review/candidate_feedback.json
+```
+
+Feedback statuses are `accepted`, `rejected`, `unsure`, and `protected`. This is review-only and does not modify geometry.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.

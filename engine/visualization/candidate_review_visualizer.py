@@ -19,6 +19,13 @@ RISK_STYLES = {
     "review_only": {"width": 2, "fill": (255, 230, 0, 45)},
 }
 
+FEEDBACK_COLORS = {
+    "accepted": (0, 220, 120, 255),
+    "rejected": (255, 70, 70, 255),
+    "protected": (80, 170, 255, 255),
+    "unsure": (255, 220, 70, 255),
+}
+
 
 def render_candidate_overlay(
     base_image_path: str,
@@ -104,7 +111,7 @@ def render_candidate_contact_sheet(
         sheet.paste(crop, (x + 8, y + 8))
         color = TYPE_COLORS.get(_candidate_type(candidate), TYPE_COLORS["unknown_review_candidate"])
         draw.rectangle((x, y, x + tile_width - 1, y + tile_height - 1), outline=color, width=2)
-        lines = _candidate_text_lines(candidate)
+        lines = _candidate_text_lines(candidate, options)
         for line_index, line in enumerate(lines[:4]):
             draw.text((x + 8, y + tile_height - 58 + line_index * 14), line, fill=(245, 245, 245, 255))
         rendered += 1
@@ -163,7 +170,7 @@ def export_candidate_crops(
     }
 
 
-def write_candidate_review_index(plan, output_path, output_paths, warnings=None):
+def write_candidate_review_index(plan, output_path, output_paths, warnings=None, feedback=None):
     candidates = _candidate_changes(plan)
     by_type = Counter(_candidate_type(change) for change in candidates)
     by_risk = Counter(_risk(change) for change in candidates)
@@ -175,6 +182,7 @@ def write_candidate_review_index(plan, output_path, output_paths, warnings=None)
         "counts_by_risk": dict(sorted(by_risk.items())),
         "output_paths": output_paths,
         "top_candidates": [_candidate_summary(change) for change in _top_candidates(candidates, 10)],
+        "feedback_counts": _feedback_counts(feedback),
         "warnings": warnings or [],
     }
     path = Path(output_path)
@@ -345,13 +353,15 @@ def _draw_label(draw, bbox, text, color):
     draw.text((label_box[0] + 3, label_box[1] + 2), str(text), fill=color)
 
 
-def _candidate_text_lines(candidate):
+def _candidate_text_lines(candidate, options=None):
+    options = options or {}
     metadata = candidate.get("metadata") or {}
+    feedback_status = _feedback_status(candidate, options)
     return [
         f"{candidate.get('change_id')} shape {candidate.get('shape_index')}",
         str(metadata.get("candidate_type")),
         f"score {metadata.get('candidate_score')} risk {candidate.get('risk_level')}",
-        f"alpha {metadata.get('layer_alpha')}",
+        f"alpha {metadata.get('layer_alpha')} fb {feedback_status}",
     ]
 
 
@@ -369,6 +379,18 @@ def _crop_filename(candidate):
         f"{candidate.get('change_id')}_shape_{candidate.get('shape_index')}_"
         f"{_candidate_type(candidate)}.png"
     )
+
+
+def _feedback_status(candidate, options):
+    feedback_by_id = options.get("feedback_by_id") or {}
+    item = feedback_by_id.get(candidate.get("change_id")) or {}
+    return item.get("status", "none")
+
+
+def _feedback_counts(feedback):
+    if not isinstance(feedback, dict):
+        return {}
+    return feedback.get("counts_by_status") or {}
 
 
 def _csv_fields():

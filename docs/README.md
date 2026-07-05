@@ -325,6 +325,32 @@ Full notes:
 docs/candidate_review_visualization.md
 ```
 
+## Candidate Review Feedback
+
+FLO v0.6.4 can create and validate human feedback for cleanup candidates:
+
+```bash
+python scripts/create_candidate_feedback_template.py --case cases/case_0001
+python scripts/update_candidate_feedback.py --feedback cases/case_0001/candidate_review/candidate_feedback.json --change-id C0001 --status unsure --note "Initial placeholder review"
+python scripts/validate_candidate_feedback.py --feedback cases/case_0001/candidate_review/candidate_feedback.json --plan cases/case_0001/optimization_plan.json
+python scripts/summarize_candidate_feedback.py --feedback cases/case_0001/candidate_review/candidate_feedback.json
+```
+
+Supported statuses:
+
+- `accepted`
+- `rejected`
+- `unsure`
+- `protected`
+
+When feedback exists, candidate review contact sheets show feedback status and the review index includes feedback counts.
+
+Full notes:
+
+```text
+docs/candidate_review_feedback.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.
