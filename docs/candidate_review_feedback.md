@@ -73,10 +73,28 @@ The summary prints total reviewed items and counts for each status.
 When `candidate_feedback.json` exists in the candidate review folder, `render_candidate_review.py` reads it automatically:
 
 ```bash
-python scripts/render_candidate_review.py --case cases/case_0001 --top-n 50
+python scripts/render_candidate_review.py --case cases/case_0001 --show-feedback
 ```
 
-Contact sheet labels include each candidate's feedback status. The review index includes feedback counts.
+You can also provide a feedback file explicitly or filter by status:
+
+```bash
+python scripts/render_candidate_review.py --case cases/case_0001 --feedback cases/case_0001/candidate_review/candidate_feedback.json
+python scripts/render_candidate_review.py --case cases/case_0001 --feedback-status unsure
+python scripts/render_candidate_review.py --case cases/case_0001 --feedback-status protected
+```
+
+Contact sheet labels include each candidate's feedback status and reviewer note preview. The review index includes feedback counts, output paths, and mismatch warnings.
+
+Feedback-aware visualization writes files such as:
+
+```text
+candidate_overlay_feedback_all.png
+candidate_overlay_feedback_unsure.png
+candidate_contact_sheet_feedback_all.png
+candidate_contact_sheet_feedback_unsure.png
+candidate_review_feedback_table.csv
+```
 
 ## Read-Only Guarantee
 
@@ -92,3 +110,5 @@ It does not:
 - touch injection logic
 
 Future cleanup versions can use accepted, rejected, unsure, and protected decisions as evidence. v0.6.4 only records the decisions.
+
+v0.6.5 displays those decisions in review images, but still does not modify geometry.

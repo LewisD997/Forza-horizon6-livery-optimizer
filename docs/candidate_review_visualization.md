@@ -12,6 +12,14 @@ This is still non-destructive. Candidate visualization does not delete, update, 
 python scripts/render_candidate_review.py --case cases/case_0001 --top-n 50
 ```
 
+Render with feedback status labels:
+
+```bash
+python scripts/render_candidate_review.py --case cases/case_0001 --show-feedback
+python scripts/render_candidate_review.py --case cases/case_0001 --feedback-status unsure
+python scripts/render_candidate_review.py --case cases/case_0001 --feedback-status protected
+```
+
 Useful filters:
 
 ```bash
@@ -37,10 +45,27 @@ cases/case_0001/candidate_review/review_summary.txt
 cases/case_0001/candidate_review/crops/
 ```
 
+When feedback exists, additional outputs are written:
+
+```text
+candidate_overlay_feedback_all.png
+candidate_overlay_feedback_accepted.png
+candidate_overlay_feedback_rejected.png
+candidate_overlay_feedback_protected.png
+candidate_overlay_feedback_unsure.png
+candidate_contact_sheet_feedback_all.png
+candidate_contact_sheet_feedback_accepted.png
+candidate_contact_sheet_feedback_rejected.png
+candidate_contact_sheet_feedback_protected.png
+candidate_contact_sheet_feedback_unsure.png
+candidate_review_feedback_table.csv
+```
+
 ## How To Read It
 
 - Overlay images show candidate regions with labels such as `C0001`.
 - Contact sheets show thumbnails with candidate type, score, risk, and alpha.
+- Feedback contact sheets also show feedback status and reviewer note preview.
 - Crops are individual candidate views with bounding boxes.
 - The CSV is for sorting and manual review.
 - The JSON index summarizes counts and output paths.
@@ -52,6 +77,8 @@ cases/case_0001/candidate_review/crops/
 `low` means multiple conservative signals agreed, but it still does not mean the shape is automatically removable.
 
 Every candidate must be manually reviewed before future cleanup.
+
+Protected candidates must not be touched by future cleanup unless the user changes the feedback.
 
 ## Candidate Types
 

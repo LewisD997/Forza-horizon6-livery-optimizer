@@ -97,6 +97,15 @@ python scripts/summarize_candidate_feedback.py --feedback cases/case_0001/candid
 
 Feedback statuses are `accepted`, `rejected`, `unsure`, and `protected`. This is review-only and does not modify geometry.
 
+Render feedback-aware review images:
+
+```bash
+python scripts/render_candidate_review.py --case cases/case_0001 --show-feedback
+python scripts/render_candidate_review.py --case cases/case_0001 --feedback-status unsure
+```
+
+This writes `candidate_overlay_feedback_*.png`, `candidate_contact_sheet_feedback_*.png`, and `candidate_review_feedback_table.csv`.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.

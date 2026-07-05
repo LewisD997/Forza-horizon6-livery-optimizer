@@ -345,10 +345,27 @@ Supported statuses:
 
 When feedback exists, candidate review contact sheets show feedback status and the review index includes feedback counts.
 
+Feedback-aware review rendering:
+
+```bash
+python scripts/render_candidate_review.py --case cases/case_0001 --show-feedback
+python scripts/render_candidate_review.py --case cases/case_0001 --feedback cases/case_0001/candidate_review/candidate_feedback.json
+python scripts/render_candidate_review.py --case cases/case_0001 --feedback-status unsure
+```
+
+This writes:
+
+```text
+candidate_overlay_feedback_*.png
+candidate_contact_sheet_feedback_*.png
+candidate_review_feedback_table.csv
+```
+
 Full notes:
 
 ```text
 docs/candidate_review_feedback.md
+docs/feedback_aware_review_visualization.md
 ```
 
 ## Renderer Compatibility Diagnostic

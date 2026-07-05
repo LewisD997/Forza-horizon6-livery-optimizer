@@ -8,13 +8,18 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from engine.visualization.candidate_review_visualizer import (
+    build_feedback_review_warnings,
     export_candidate_crops,
     render_candidate_contact_sheet,
     render_candidate_overlay,
+    write_candidate_feedback_review_csv,
     write_candidate_review_csv,
     write_candidate_review_index,
     write_review_summary,
 )
+
+
+FEEDBACK_STATUSES = ("accepted", "rejected", "protected", "unsure")
 
 
 def main():
@@ -27,6 +32,10 @@ def main():
     parser.add_argument("--top-n", type=int, default=50)
     parser.add_argument("--candidate-type")
     parser.add_argument("--risk-level")
+    parser.add_argument("--feedback", help="candidate_feedback.json path.")
+    parser.add_argument("--feedback-status", choices=FEEDBACK_STATUSES)
+    parser.add_argument("--show-feedback", action="store_true")
+    parser.add_argument("--hide-feedback", action="store_true")
     parser.add_argument("--crop-padding", type=int, default=24)
     parser.add_argument("--no-crops", action="store_true")
     args = parser.parse_args()
@@ -40,6 +49,8 @@ def main():
     print(f"Candidate review written to {report['output_dir']}")
     print(f"Total candidates: {report['total_candidates']}")
     print(f"Rendered candidates: {report['rendered_candidates']}")
+    for warning in report.get("warnings", []):
+        print(f"Warning: {warning}")
     return 0
 
 
@@ -52,17 +63,32 @@ def render_review(args):
 
     plan = _load_json(plan_path)
     geometry = _load_json(geometry_path)
-    feedback_path = output_dir / "candidate_feedback.json"
-    feedback = _load_json(feedback_path) if feedback_path.exists() else None
+    feedback_path = Path(args.feedback) if args.feedback else output_dir / "candidate_feedback.json"
+    feedback_requested = bool(args.feedback or args.show_feedback or args.feedback_status)
+    feedback = None
+    warnings = []
+    if not args.hide_feedback and feedback_path.exists():
+        feedback = _load_json(feedback_path)
+    elif feedback_requested and not args.hide_feedback:
+        warnings.append(f"Feedback file not found: {feedback_path}. Falling back to non-feedback review.")
+    if args.hide_feedback:
+        feedback_path = None
     feedback_by_id = _feedback_by_id(feedback)
+    warnings.extend(build_feedback_review_warnings(plan, feedback))
     output_dir.mkdir(parents=True, exist_ok=True)
-    filter_suffix = _filter_suffix(args.candidate_type, args.risk_level) if (args.candidate_type or args.risk_level) else None
+    effective_feedback_status = args.feedback_status if feedback else None
+    filter_suffix = (
+        _filter_suffix(args.candidate_type, args.risk_level, effective_feedback_status)
+        if (args.candidate_type or args.risk_level or effective_feedback_status)
+        else None
+    )
 
     common = {
         "top_n": args.top_n,
         "crop_padding": args.crop_padding,
         "candidate_type": args.candidate_type,
         "risk_level": args.risk_level,
+        "feedback_status": effective_feedback_status,
         "feedback_by_id": feedback_by_id,
     }
     output_paths = {}
@@ -140,7 +166,24 @@ def render_review(args):
     summary_name = f"review_summary_{filter_suffix}.txt" if filter_suffix else "review_summary.txt"
     index_name = f"candidate_review_index_{filter_suffix}.json" if filter_suffix else "candidate_review_index.json"
     output_paths["csv"] = write_candidate_review_csv(plan, output_dir / csv_name)
-    output_paths["summary"] = write_review_summary(plan, output_dir / summary_name)
+    if feedback:
+        feedback_outputs = _render_feedback_outputs(
+            base_image,
+            plan,
+            geometry,
+            output_dir,
+            common,
+            effective_feedback_status,
+        )
+        output_paths["outputs_by_feedback_status"] = feedback_outputs["outputs_by_feedback_status"]
+        output_paths["feedback_csv"] = write_candidate_feedback_review_csv(
+            plan,
+            output_dir / "candidate_review_feedback_table.csv",
+            feedback=feedback,
+        )
+        rendered_total += feedback_outputs["rendered_candidates"]
+        skipped_total += feedback_outputs["skipped_candidates"]
+    output_paths["summary"] = write_review_summary(plan, output_dir / summary_name, feedback=feedback, warnings=warnings)
     output_paths["base_image"] = str(base_image)
     index = write_candidate_review_index(
         plan,
@@ -150,8 +193,9 @@ def render_review(args):
             "rendered_candidates": rendered_total,
             "skipped_candidates": skipped_total,
         },
-        warnings=[],
+        warnings=warnings,
         feedback=feedback,
+        feedback_path=feedback_path if feedback else None,
     )
     return {
         "output_dir": str(output_dir),
@@ -159,6 +203,47 @@ def render_review(args):
         "rendered_candidates": rendered_total,
         "skipped_candidates": skipped_total,
         "index": index,
+        "warnings": warnings,
+    }
+
+
+def _render_feedback_outputs(base_image, plan, geometry, output_dir, common, only_status=None):
+    statuses = [only_status] if only_status else ["all", *FEEDBACK_STATUSES]
+    outputs = {}
+    rendered_total = 0
+    skipped_total = 0
+    for status in statuses:
+        options = {**common, "group_feedback_first": True}
+        if status != "all":
+            options["feedback_status"] = status
+        else:
+            options["feedback_status"] = None
+        overlay = render_candidate_overlay(
+            str(base_image),
+            plan,
+            geometry,
+            str(output_dir / f"candidate_overlay_feedback_{status}.png"),
+            options,
+        )
+        sheet = render_candidate_contact_sheet(
+            str(base_image),
+            plan,
+            geometry,
+            str(output_dir / f"candidate_contact_sheet_feedback_{status}.png"),
+            options,
+        )
+        outputs[status] = {
+            "overlay": overlay["output_path"],
+            "contact_sheet": sheet["output_path"],
+            "overlay_rendered_candidates": overlay["rendered_candidates"],
+            "contact_sheet_rendered_candidates": sheet["rendered_candidates"],
+        }
+        rendered_total += overlay["rendered_candidates"] + sheet["rendered_candidates"]
+        skipped_total += overlay["skipped_candidates"] + sheet["skipped_candidates"]
+    return {
+        "outputs_by_feedback_status": outputs,
+        "rendered_candidates": rendered_total,
+        "skipped_candidates": skipped_total,
     }
 
 
@@ -189,12 +274,14 @@ def _feedback_by_id(feedback):
     return {item.get("change_id"): item for item in feedback.get("items", []) if item.get("change_id")}
 
 
-def _filter_suffix(candidate_type, risk_level):
+def _filter_suffix(candidate_type, risk_level, feedback_status=None):
     parts = []
     if candidate_type:
         parts.append(candidate_type)
     if risk_level:
         parts.append(risk_level)
+    if feedback_status:
+        parts.append(f"feedback_{feedback_status}")
     return "_".join(parts) if parts else "all"
 
 
