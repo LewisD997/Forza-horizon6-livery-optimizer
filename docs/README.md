@@ -391,6 +391,30 @@ Full notes:
 docs/accepted_candidate_sandbox_removal.md
 ```
 
+## Removal Impact Scoring
+
+FLO v0.6.7 can score the visual impact of sandbox removal previews:
+
+```bash
+python scripts/score_removal_impact.py --case cases/case_0001
+python scripts/validate_removal_impact.py --report cases/case_0001/removal_simulation/removal_impact_report.json
+```
+
+It writes:
+
+```text
+cases/case_0001/removal_simulation/removal_impact_report.json
+cases/case_0001/removal_simulation/removal_impact_summary.txt
+```
+
+If no accepted candidates exist, the status is `not_applicable_no_removals`. This is expected and safe.
+
+Full notes:
+
+```text
+docs/removal_impact_scoring.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.

@@ -115,6 +115,15 @@ python scripts/validate_removal_simulation.py --report cases/case_0001/removal_s
 
 This writes diagnostic files under `cases/case_0001/removal_simulation/`. It does not modify the original geometry.
 
+Score sandbox removal impact:
+
+```bash
+python scripts/score_removal_impact.py --case cases/case_0001
+python scripts/validate_removal_impact.py --report cases/case_0001/removal_simulation/removal_impact_report.json
+```
+
+This writes `removal_impact_report.json`. It is only a diagnostic score, not cleanup approval.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.

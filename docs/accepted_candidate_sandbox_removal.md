@@ -94,6 +94,13 @@ In that case no removal is simulated. `after_preview.png` and `diff.png` are not
 python scripts/validate_removal_simulation.py --report cases/case_0001/removal_simulation/removal_simulation_report.json --geometry cases/case_0001/paintstudio_geometry.json
 ```
 
+Score visual impact:
+
+```bash
+python scripts/score_removal_impact.py --case cases/case_0001
+python scripts/validate_removal_impact.py --report cases/case_0001/removal_simulation/removal_impact_report.json
+```
+
 Validation checks:
 
 - required report fields exist
@@ -117,4 +124,10 @@ Important fields:
 
 ## Next Step
 
-The next step should be impact scoring of sandbox removals before any real cleanup output exists.
+Impact scoring is documented in:
+
+```text
+docs/removal_impact_scoring.md
+```
+
+After that, the next step should be a safe cleanup proposal layer before any real cleanup output exists.

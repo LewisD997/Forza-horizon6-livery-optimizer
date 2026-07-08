@@ -8,6 +8,8 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from engine.optimizer.sandbox_removal_simulator import simulate_accepted_candidate_removal
+from engine.optimizer.removal_impact_scorer import score_removal_impact
+from engine.output.removal_impact_writer import write_removal_impact_report
 from engine.output.removal_simulation_writer import (
     write_removal_simulation_report,
     write_sandbox_geometry,
@@ -29,6 +31,7 @@ def main():
     parser.add_argument("--max-removals", type=int)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--write-sandbox-geometry", action="store_true")
+    parser.add_argument("--score-impact", action="store_true")
     args = parser.parse_args()
 
     try:
@@ -91,6 +94,8 @@ def run_simulation(args):
     _try_render_outputs(report, paths, args)
     if report["status"] == "completed" and report.get("warnings"):
         report["status"] = "completed_with_warnings"
+    if args.score_impact:
+        _try_score_impact(report, paths, args)
     _write_summary(report, paths["summary"])
     write_removal_simulation_report(report, paths["report"], overwrite=args.overwrite)
     return _strip_sandbox(report)
@@ -156,6 +161,7 @@ def _resolve_paths(args):
         "after_preview": output_dir / "after_preview.png",
         "diff": output_dir / "diff.png",
         "summary": output_dir / "removal_simulation_summary.txt",
+        "impact_report": output_dir / "removal_impact_report.json",
     }
 
 
@@ -191,6 +197,20 @@ def _write_summary(report, path):
         lines.extend(f"- {warning}" for warning in report["warnings"])
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(lines), encoding="utf-8")
+
+
+def _try_score_impact(report, paths, args):
+    try:
+        impact = score_removal_impact(
+            str(paths["before_preview"]),
+            str(paths["after_preview"]),
+            removal_report=report,
+        )
+        impact["input_paths"]["removal_simulation_report"] = str(paths["report"])
+        write_removal_impact_report(impact, paths["impact_report"], overwrite=args.overwrite)
+        report.setdefault("outputs", {})["impact_report"] = str(paths["impact_report"])
+    except Exception as exc:
+        report["warnings"].append(f"Impact scoring failed: {exc}")
 
 
 def _image_size(path):
