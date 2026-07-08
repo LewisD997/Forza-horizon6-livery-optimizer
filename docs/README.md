@@ -368,6 +368,29 @@ docs/candidate_review_feedback.md
 docs/feedback_aware_review_visualization.md
 ```
 
+## Accepted Candidate Sandbox Removal
+
+FLO v0.6.6 can simulate removing only accepted candidates from a sandbox geometry copy:
+
+```bash
+python scripts/simulate_accepted_removal.py --case cases/case_0001
+python scripts/validate_removal_simulation.py --report cases/case_0001/removal_simulation/removal_simulation_report.json --geometry cases/case_0001/paintstudio_geometry.json
+```
+
+The simulator writes to:
+
+```text
+cases/case_0001/removal_simulation/
+```
+
+It blocks protected, rejected, and unsure candidates. It does not modify original geometry, update shape data, add replacement shapes, or touch injection logic.
+
+Full notes:
+
+```text
+docs/accepted_candidate_sandbox_removal.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.

@@ -106,6 +106,15 @@ python scripts/render_candidate_review.py --case cases/case_0001 --feedback-stat
 
 This writes `candidate_overlay_feedback_*.png`, `candidate_contact_sheet_feedback_*.png`, and `candidate_review_feedback_table.csv`.
 
+Simulate removing accepted candidates in a sandbox copy:
+
+```bash
+python scripts/simulate_accepted_removal.py --case cases/case_0001
+python scripts/validate_removal_simulation.py --report cases/case_0001/removal_simulation/removal_simulation_report.json --geometry cases/case_0001/paintstudio_geometry.json
+```
+
+This writes diagnostic files under `cases/case_0001/removal_simulation/`. It does not modify the original geometry.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.
