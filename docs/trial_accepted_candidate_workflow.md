@@ -136,6 +136,17 @@ false
 false
 ```
 
+## Per-Candidate Follow-Up
+
+If a trial batch is risky, run per-candidate ablation to isolate which candidate caused the visible change:
+
+```bash
+python scripts/run_per_candidate_ablation.py --case cases/case_0001
+python scripts/validate_per_candidate_ablation.py --report cases/case_0001/removal_simulation/ablation/per_candidate_ablation_report.json
+```
+
+This writes under `removal_simulation/ablation/` and still does not modify original geometry or original feedback.
+
 ## Diagnostic Only
 
 This workflow is a rehearsal path, not cleanup approval.

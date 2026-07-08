@@ -438,6 +438,29 @@ Full notes:
 docs/trial_accepted_candidate_workflow.md
 ```
 
+## Per-Candidate Trial Ablation
+
+FLO v0.6.9 can test trial candidates one at a time:
+
+```bash
+python scripts/run_per_candidate_ablation.py --case cases/case_0001
+python scripts/validate_per_candidate_ablation.py --report cases/case_0001/removal_simulation/ablation/per_candidate_ablation_report.json
+```
+
+This writes under:
+
+```text
+cases/case_0001/removal_simulation/ablation/
+```
+
+Use this when a trial batch is risky and you need to see which individual candidate is safe, probably safe, risky, failed, or not applicable.
+
+Full notes:
+
+```text
+docs/per_candidate_trial_ablation.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.

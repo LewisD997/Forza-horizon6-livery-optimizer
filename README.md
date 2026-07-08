@@ -133,6 +133,15 @@ python scripts/validate_trial_workflow.py --report cases/case_0001/removal_simul
 
 This writes only under `cases/case_0001/removal_simulation/trial/`, using `candidate_feedback_trial.json`. It does not modify the original geometry or original `candidate_feedback.json`.
 
+Run per-candidate trial ablation:
+
+```bash
+python scripts/run_per_candidate_ablation.py --case cases/case_0001
+python scripts/validate_per_candidate_ablation.py --report cases/case_0001/removal_simulation/ablation/per_candidate_ablation_report.json
+```
+
+This tests trial candidates one at a time under `cases/case_0001/removal_simulation/ablation/`. It helps identify which candidate caused a risky batch result.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.

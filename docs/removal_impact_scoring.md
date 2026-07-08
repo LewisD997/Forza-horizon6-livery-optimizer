@@ -38,6 +38,15 @@ python scripts/validate_trial_workflow.py --report cases/case_0001/removal_simul
 
 This writes trial impact output under `cases/case_0001/removal_simulation/trial/`.
 
+Per-candidate ablation runs impact scoring one candidate at a time:
+
+```bash
+python scripts/run_per_candidate_ablation.py --case cases/case_0001
+python scripts/validate_per_candidate_ablation.py --report cases/case_0001/removal_simulation/ablation/per_candidate_ablation_report.json
+```
+
+This is useful when a batch removal is risky and FLO needs to identify which candidate caused the change.
+
 ## Metrics
 
 The scorer computes:
