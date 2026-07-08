@@ -29,6 +29,15 @@ The removal simulator can also run scoring:
 python scripts/simulate_accepted_removal.py --case cases/case_0001 --score-impact
 ```
 
+For conservative trial feedback without changing the real review file:
+
+```bash
+python scripts/run_trial_accepted_workflow.py --case cases/case_0001 --max-trial-accepts 5
+python scripts/validate_trial_workflow.py --report cases/case_0001/removal_simulation/trial/trial_workflow_report.json
+```
+
+This writes trial impact output under `cases/case_0001/removal_simulation/trial/`.
+
 ## Metrics
 
 The scorer computes:

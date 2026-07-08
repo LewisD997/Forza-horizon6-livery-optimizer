@@ -101,6 +101,15 @@ python scripts/score_removal_impact.py --case cases/case_0001
 python scripts/validate_removal_impact.py --report cases/case_0001/removal_simulation/removal_impact_report.json
 ```
 
+Trial accepted-candidate workflow:
+
+```bash
+python scripts/run_trial_accepted_workflow.py --case cases/case_0001 --max-trial-accepts 5
+python scripts/validate_trial_workflow.py --report cases/case_0001/removal_simulation/trial/trial_workflow_report.json
+```
+
+The trial workflow writes under `removal_simulation/trial/` and uses a temporary `candidate_feedback_trial.json`. It does not modify the original `candidate_feedback.json`.
+
 Validation checks:
 
 - required report fields exist

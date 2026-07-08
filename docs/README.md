@@ -415,6 +415,29 @@ Full notes:
 docs/removal_impact_scoring.md
 ```
 
+## Trial Accepted Candidate Workflow
+
+FLO v0.6.8 can create temporary trial feedback, mark a few conservative `unsure` candidates as trial accepted, and run sandbox removal plus impact scoring:
+
+```bash
+python scripts/run_trial_accepted_workflow.py --case cases/case_0001 --max-trial-accepts 5
+python scripts/validate_trial_workflow.py --report cases/case_0001/removal_simulation/trial/trial_workflow_report.json
+```
+
+This writes under:
+
+```text
+cases/case_0001/removal_simulation/trial/
+```
+
+The original `candidate_feedback.json` and original Paint Studio geometry are not modified.
+
+Full notes:
+
+```text
+docs/trial_accepted_candidate_workflow.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.

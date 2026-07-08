@@ -124,6 +124,15 @@ python scripts/validate_removal_impact.py --report cases/case_0001/removal_simul
 
 This writes `removal_impact_report.json`. It is only a diagnostic score, not cleanup approval.
 
+Run a temporary trial accepted-candidate workflow:
+
+```bash
+python scripts/run_trial_accepted_workflow.py --case cases/case_0001 --max-trial-accepts 5
+python scripts/validate_trial_workflow.py --report cases/case_0001/removal_simulation/trial/trial_workflow_report.json
+```
+
+This writes only under `cases/case_0001/removal_simulation/trial/`, using `candidate_feedback_trial.json`. It does not modify the original geometry or original `candidate_feedback.json`.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.
