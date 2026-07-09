@@ -485,6 +485,29 @@ Full notes:
 docs/ablation_evidence_pack_and_auto_triage.md
 ```
 
+## Visible Contribution Scanner
+
+FLO v0.6.11 can directly measure actual contribution by sandbox-removing shapes one at a time:
+
+```bash
+python scripts/scan_visible_contribution.py --case cases/case_0001
+python scripts/validate_visible_contribution.py --report cases/case_0001/visible_contribution/visible_contribution_report.json
+```
+
+This writes:
+
+```text
+cases/case_0001/visible_contribution/
+```
+
+It classifies shapes as negligible, barely visible, minor, important, critical, or failed, and recommends safe delete review, replacement, protection, or manual review.
+
+Full notes:
+
+```text
+docs/visible_contribution_scanner.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.

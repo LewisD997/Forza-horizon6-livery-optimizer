@@ -97,3 +97,14 @@ This version is non-destructive:
 - Paint Studio source and injection logic are untouched
 
 `safe_delete_candidate` is still not final cleanup approval.
+
+## Visible Contribution Follow-Up
+
+After reviewing ablation evidence, run the visible contribution scanner to measure actual shape contribution by direct sandbox removal:
+
+```bash
+python scripts/scan_visible_contribution.py --case cases/case_0001
+python scripts/validate_visible_contribution.py --report cases/case_0001/visible_contribution/visible_contribution_report.json
+```
+
+This writes `visible_contribution/` and can separate hidden or negligible shapes from shapes that need replacement or protection.

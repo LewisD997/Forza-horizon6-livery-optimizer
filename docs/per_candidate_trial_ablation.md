@@ -121,3 +121,10 @@ python scripts/validate_ablation_evidence_pack.py --report cases/case_0001/remov
 ```
 
 This writes `removal_simulation/ablation/evidence_pack/` and includes auto triage labels such as `needs_replacement`, `protect_candidate`, and `unclear_needs_review`.
+
+For direct shape contribution scoring, run:
+
+```bash
+python scripts/scan_visible_contribution.py --case cases/case_0001
+python scripts/validate_visible_contribution.py --report cases/case_0001/visible_contribution/visible_contribution_report.json
+```
