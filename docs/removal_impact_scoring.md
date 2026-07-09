@@ -47,6 +47,15 @@ python scripts/validate_per_candidate_ablation.py --report cases/case_0001/remov
 
 This is useful when a batch removal is risky and FLO needs to identify which candidate caused the change.
 
+Generate enlarged evidence cards and auto triage:
+
+```bash
+python scripts/generate_ablation_evidence_pack.py --case cases/case_0001 --upscale 6 --crop-padding 48
+python scripts/validate_ablation_evidence_pack.py --report cases/case_0001/removal_simulation/ablation/evidence_pack/ablation_evidence_pack_report.json
+```
+
+The evidence pack is easier to inspect than full-image before/after previews.
+
 ## Metrics
 
 The scorer computes:

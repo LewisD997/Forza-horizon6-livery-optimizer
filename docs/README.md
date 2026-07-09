@@ -461,6 +461,30 @@ Full notes:
 docs/per_candidate_trial_ablation.md
 ```
 
+## Ablation Evidence Pack And Auto Triage
+
+FLO v0.6.10 can generate enlarged evidence cards and conservative triage labels:
+
+```bash
+python scripts/generate_ablation_evidence_pack.py --case cases/case_0001 --upscale 6 --crop-padding 48
+python scripts/validate_ablation_evidence_pack.py --report cases/case_0001/removal_simulation/ablation/evidence_pack/ablation_evidence_pack_report.json
+```
+
+This writes:
+
+```text
+cases/case_0001/removal_simulation/ablation/evidence_pack/
+cases/case_0001/removal_simulation/ablation/evidence_pack/assistant_review_pack/
+```
+
+Triage decisions are diagnostic only. `safe_delete_candidate` is not final cleanup approval.
+
+Full notes:
+
+```text
+docs/ablation_evidence_pack_and_auto_triage.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.

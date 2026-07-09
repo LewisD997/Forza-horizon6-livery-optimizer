@@ -142,6 +142,15 @@ python scripts/validate_per_candidate_ablation.py --report cases/case_0001/remov
 
 This tests trial candidates one at a time under `cases/case_0001/removal_simulation/ablation/`. It helps identify which candidate caused a risky batch result.
 
+Generate ablation evidence cards and auto triage:
+
+```bash
+python scripts/generate_ablation_evidence_pack.py --case cases/case_0001 --upscale 6 --crop-padding 48
+python scripts/validate_ablation_evidence_pack.py --report cases/case_0001/removal_simulation/ablation/evidence_pack/ablation_evidence_pack_report.json
+```
+
+This writes local crops, amplified diffs, review cards, a combined sheet, and an `assistant_review_pack/`. It is evidence-only and does not approve cleanup.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.

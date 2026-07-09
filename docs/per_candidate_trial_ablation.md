@@ -110,3 +110,14 @@ This workflow is diagnostic only. It does not write official `optimized_geometry
 ## Future Use
 
 Per-candidate ablation prepares FLO for a future safe cleanup proposal layer. That later layer should still require explicit review before writing any real optimized geometry.
+
+## Evidence Pack Follow-Up
+
+After running per-candidate ablation, generate enlarged review evidence:
+
+```bash
+python scripts/generate_ablation_evidence_pack.py --case cases/case_0001 --upscale 6 --crop-padding 48
+python scripts/validate_ablation_evidence_pack.py --report cases/case_0001/removal_simulation/ablation/evidence_pack/ablation_evidence_pack_report.json
+```
+
+This writes `removal_simulation/ablation/evidence_pack/` and includes auto triage labels such as `needs_replacement`, `protect_candidate`, and `unclear_needs_review`.
