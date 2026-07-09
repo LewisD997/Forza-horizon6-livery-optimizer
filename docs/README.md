@@ -508,6 +508,38 @@ Full notes:
 docs/visible_contribution_scanner.md
 ```
 
+## Safe Delete Pool Batch Validator
+
+FLO v0.6.12 can batch-check the narrow `safe_delete_pool` from the visible contribution scan:
+
+```bash
+python scripts/validate_safe_delete_pool.py --case cases/case_0001 --overwrite
+python scripts/validate_safe_delete_pool_report.py --report cases/case_0001/safe_delete_validation/safe_delete_pool_validation_report.json
+```
+
+This writes:
+
+```text
+cases/case_0001/safe_delete_validation/
+  safe_delete_pool_validation_report.json
+  safe_delete_cleanup_proposal.json
+  safe_delete_validation_summary.txt
+  sandbox_safe_deleted_geometry.json
+  before_preview.png
+  after_preview.png
+  diff.png
+  removal_impact_report.json
+  evidence_sheet.png
+```
+
+The validator removes only `safe_delete_pool` shapes in a sandbox copy, writes a proposal, and does not write official `optimized_geometry.json`.
+
+Full notes:
+
+```text
+docs/safe_delete_pool_batch_validator.md
+```
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO's preview renderer.

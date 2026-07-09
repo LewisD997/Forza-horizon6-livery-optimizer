@@ -160,6 +160,15 @@ python scripts/validate_visible_contribution.py --report cases/case_0001/visible
 
 This directly removes one shape at a time in a sandbox copy and classifies actual visual contribution. Low alpha alone is not treated as safe delete.
 
+Batch-validate the safe delete pool:
+
+```bash
+python scripts/validate_safe_delete_pool.py --case cases/case_0001 --overwrite
+python scripts/validate_safe_delete_pool_report.py --report cases/case_0001/safe_delete_validation/safe_delete_pool_validation_report.json
+```
+
+This writes `cases/case_0001/safe_delete_validation/`, including `safe_delete_pool_validation_report.json`, `safe_delete_cleanup_proposal.json`, before/after previews, diff, impact report, and evidence sheet. It is proposal-only and does not write official `optimized_geometry.json`.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.

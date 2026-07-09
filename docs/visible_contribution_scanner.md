@@ -52,6 +52,36 @@ The scanner can identify:
 
 Low alpha does not equal safe delete. Only actual visible contribution metrics can put a shape into `safe_delete_pool`.
 
+## Safe Delete Pool Batch Validation
+
+v0.6.12 adds a second check after visible contribution scanning.
+
+`safe_delete_pool` is not final cleanup approval. Before FLO can propose deletion, all safe-delete shapes are removed together in a sandbox copy and rescored as a batch.
+
+Run:
+
+```bash
+python scripts/validate_safe_delete_pool.py --case cases/case_0001 --overwrite
+python scripts/validate_safe_delete_pool_report.py --report cases/case_0001/safe_delete_validation/safe_delete_pool_validation_report.json
+```
+
+This writes:
+
+```text
+cases/case_0001/safe_delete_validation/
+  safe_delete_pool_validation_report.json
+  safe_delete_cleanup_proposal.json
+  safe_delete_validation_summary.txt
+  sandbox_safe_deleted_geometry.json
+  before_preview.png
+  after_preview.png
+  diff.png
+  removal_impact_report.json
+  evidence_sheet.png
+```
+
+The cleanup proposal is still proposal-only. FLO does not write official `optimized_geometry.json` in v0.6.12.
+
 ## Run
 
 Default low-risk candidate scan:
