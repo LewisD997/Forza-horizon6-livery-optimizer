@@ -28,3 +28,9 @@ Optional hints use `semantic_region_hints.json` with positive points, negative p
 Outputs include semantic JSON, flat-ID map, source overlay, confidence map, review sheet, individual masks, attribution JSON/CSV, region summaries, diagnostics, and a representative attribution overlay.
 
 The heuristic backend is not guaranteed truth. Color similarity, complex backgrounds, unusual crops, effects, and heavy occlusion can reduce confidence. Review the map and unknown ratio before using it as evidence. v0.7.0 writes no cleanup geometry, never overwrites original Paint Studio geometry, and makes no destructive decisions.
+
+## v0.7.0.1 Foreground Correction
+
+Source alpha is now an immutable semantic domain boundary. Alpha-background pixels and their arbitrary RGB values are excluded from clustering, and no morphology, hint, or post-processing step may cross outside source foreground. Strict-alpha validation requires zero transparent leaks, perfect transparent background recall, and exact foreground-domain agreement.
+
+Eye proposals now use per-component and aggregate area, compactness, face overlap, relative position, local contrast, aspect ratio, and at-most-two-candidate guardrails. Uncertain pixels remain face skin or foreground unknown. See `semantic_foreground_guardrails.md`.

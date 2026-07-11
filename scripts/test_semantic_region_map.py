@@ -16,7 +16,8 @@ from scripts.validate_semantic_region_map import validate_outputs
 
 
 def main():
-    test_foreground_and_determinism(); test_visibility_and_attribution(); test_cli_validation()
+    test_foreground_and_determinism(); test_strict_alpha_guardrails(); test_eye_guardrails()
+    test_visibility_and_attribution(); test_cli_validation(); test_corrupted_map_fails()
     print("Semantic region map tests passed."); return 0
 
 
@@ -24,12 +25,40 @@ def test_foreground_and_determinism():
     with tempfile.TemporaryDirectory() as temp:
         root=Path(temp); transparent=root/"transparent.png"; image=Image.new("RGBA",(60,80),(0,0,0,0)); ImageDraw.Draw(image).rectangle((15,10,45,70),fill=(200,80,120,255)); image.save(transparent)
         a=generate_semantic_region_proposal(str(transparent)); b=generate_semantic_region_proposal(str(transparent))
-        assert a["diagnostics"]["foreground_source"]=="source_alpha" and np.array_equal(a["_label_map"],b["_label_map"])
+        assert a["diagnostics"]["foreground_source"]=="source_alpha_strict" and np.array_equal(a["_label_map"],b["_label_map"])
         assert validate_partition(a["_masks"],~a["_masks"]["background"])
         opaque=root/"opaque.png"; _anime_image().convert("RGB").save(opaque); result=generate_semantic_region_proposal(str(opaque))
         assert result["diagnostics"]["foreground_source"]=="border_color_separation"
         assert result["coverage"]["foreground_unknown_pixel_count"]>=0
         assert any(record["label"] in {"hair","face_skin","clothing","foreground_unknown"} for record in result["regions"])
+
+
+def test_strict_alpha_guardrails():
+    with tempfile.TemporaryDirectory() as temp:
+        path=Path(temp)/"alpha.png"; array=np.zeros((8,10,4),dtype=np.uint8)
+        array[:,:,:3]=[71,203,119]; array[:,:,3]=0; array[2:6,2:8,:3]=[220,170,140]; array[2:6,2:8,3]=1
+        Image.fromarray(array,"RGBA").save(path); result=generate_semantic_region_proposal(str(path),{"foreground_alpha_threshold":0,"minimum_region_area":1})
+        coverage=result["coverage"]; diagnostics=result["diagnostics"]
+        assert diagnostics["foreground_extraction"]["mode"]=="source_alpha_strict"
+        assert coverage["foreground_pixel_count"]==24 and coverage["background_pixel_count"]==56
+        assert coverage["source_transparent_pixel_count"]==56 and coverage["source_nontransparent_pixel_count"]==24
+        assert coverage["transparent_semantic_leak_count"]==0 and coverage["transparent_background_recall"]==1.0
+        assert coverage["clustered_background_pixel_count"]==0
+        assert diagnostics["color_clustering"]["cluster_pixel_total"]==24
+        for label,mask in result["_masks"].items():
+            if label not in {"background","outline_edge"}: assert not mask[array[:,:,3]==0].any()
+
+
+def test_eye_guardrails():
+    with tempfile.TemporaryDirectory() as temp:
+        root=Path(temp)
+        valid=_anime_image(); valid.putalpha(255); valid_path=root/"valid.png"; valid.save(valid_path)
+        valid_result=generate_semantic_region_proposal(str(valid_path),{"minimum_region_area":1})
+        eye=valid_result["diagnostics"]["eye_detection"]
+        assert eye["eye_mask_area"] <= max(1,int(next((r["pixel_area"] for r in valid_result["regions"] if r["label"]=="face_skin"),1)*.05))
+        oversized=_anime_image(); draw=ImageDraw.Draw(oversized); draw.rectangle((10,8,29,18),fill=(10,10,10,255)); large=root/"large.png"; oversized.save(large)
+        large_eye=generate_semantic_region_proposal(str(large),{"minimum_region_area":1})["diagnostics"]["eye_detection"]
+        assert large_eye["eye_mask_area"]==0 or any("area_too_large" in item["reasons"] or "bbox_too_large" in item["reasons"] for item in large_eye["rejected_candidates"])
 
 
 def test_visibility_and_attribution():
@@ -53,6 +82,20 @@ def test_cli_validation():
             foreground_alpha_threshold=8,color_clusters=8,minimum_region_area=4,unknown_warning_threshold=.9,attribution_overlap_threshold=.05,ambiguity_margin=.08,visibility_resolution_scale=1.0,
             debug_shape_indexes=None,overwrite=False,skip_layer_attribution=False,no_visualizations=True)
         result=run_from_args(args); validate_outputs(_public_regions(result["regions"]),result["attribution"],_geometry())
+
+
+def test_corrupted_map_fails():
+    with tempfile.TemporaryDirectory() as temp:
+        root=Path(temp); image=root/"source.png"; rgba=np.zeros((30,40,4),dtype=np.uint8); rgba[5:25,8:32]=[200,120,150,255]; Image.fromarray(rgba,"RGBA").save(image)
+        geometry=root/"geometry.json"; geometry.write_text(json.dumps(_geometry()),encoding="utf-8")
+        args=SimpleNamespace(case=None,image=str(image),geometry=str(geometry),plan=None,visible_contribution_report=None,output_dir=str(root/"out"),backend="heuristic-anime",region_hints=None,
+            foreground_alpha_threshold=0,color_clusters=8,minimum_region_area=1,unknown_warning_threshold=.9,attribution_overlap_threshold=.05,ambiguity_margin=.08,visibility_resolution_scale=1.0,
+            debug_shape_indexes=None,overwrite=False,skip_layer_attribution=False,no_visualizations=False)
+        result=run_from_args(args); map_path=Path(result["regions"]["outputs"]["region_map"]); region_map=Image.open(map_path); values=np.array(region_map); values[0,0]=1
+        corrupted=Image.fromarray(values.astype("uint8"),"P"); corrupted.putpalette(region_map.getpalette()); corrupted.save(map_path)
+        try: validate_outputs(_public_regions(result["regions"]),result["attribution"],_geometry())
+        except ValueError as exc: assert "source-transparent" in str(exc)
+        else: raise AssertionError("Validator accepted a semantic label in transparent background.")
 
 
 def _anime_image():

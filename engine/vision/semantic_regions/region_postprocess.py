@@ -30,13 +30,15 @@ def filter_components(mask, minimum_area=8, keep_largest=True):
     return out
 
 
-def fill_small_holes(mask, maximum_area=16):
+def fill_small_holes(mask, maximum_area=16, domain_mask=None):
     inverse = ~np.asarray(mask, dtype=bool); out = np.array(mask, dtype=bool, copy=True)
     h, w = out.shape
     for component in connected_components(inverse):
         touches = any(y in {0,h-1} or x in {0,w-1} for y,x in component)
         if not touches and len(component) <= maximum_area:
             ys, xs = zip(*component); out[np.array(ys), np.array(xs)] = True
+    if domain_mask is not None:
+        out &= np.asarray(domain_mask, dtype=bool)
     return out
 
 
@@ -47,12 +49,16 @@ def resolve_exclusive_masks(masks, foreground):
         result[label] = candidate; assigned |= candidate
     result["foreground_unknown"] = foreground & ~assigned
     result["background"] = ~foreground
+    for label in result:
+        if label != "background":
+            result[label] &= foreground
     return result
 
 
 def build_label_map(masks):
     shape = next(iter(masks.values())).shape; label_map = np.full(shape, REGION_IDS["unknown"], dtype=np.uint8)
     for label in EXCLUSIVE_LABELS: label_map[masks.get(label, False)] = REGION_IDS[label]
+    label_map[masks["background"]] = REGION_IDS["background"]
     return label_map
 
 

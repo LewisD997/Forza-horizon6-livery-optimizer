@@ -554,6 +554,8 @@ python scripts/validate_semantic_region_map.py --regions cases/case_0001/semanti
 
 These are confidence-bearing proposals, not guaranteed segmentation. Weak pixels remain `foreground_unknown`; geometry is never modified. See `docs/semantic_region_map_and_layer_attribution.md`.
 
+v0.7.0.1 corrects transparent-background leakage: source alpha is immutable, transparent RGB never enters clustering, post-processing cannot cross the alpha domain, and strict-alpha validation requires zero leaks. Eye detection also uses conservative size, compactness, face-overlap, and aggregate limits. See `docs/semantic_foreground_guardrails.md`.
+
 Full notes:
 
 ```text

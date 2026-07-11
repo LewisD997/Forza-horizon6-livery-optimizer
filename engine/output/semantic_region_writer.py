@@ -25,7 +25,16 @@ def validate_semantic_region_result(result):
     if required-set(result): raise ValueError(f"Semantic result missing: {sorted(required-set(result))}")
     for record in result["regions"]:
         if record["label"] not in VALID_LABELS or not 0<=record["confidence"]<=1: raise ValueError("Invalid semantic region record.")
-    if result["coverage"].get("exclusive_partition_valid") is not True: raise ValueError("Exclusive semantic partition is invalid.")
+    coverage=result["coverage"]
+    required_coverage={"source_transparent_pixel_count","source_nontransparent_pixel_count","transparent_semantic_leak_count",
+        "transparent_semantic_leak_ratio","transparent_background_recall","foreground_domain_match_ratio",
+        "semantic_pixels_outside_foreground_count","clustered_background_pixel_count"}
+    if required_coverage-set(coverage): raise ValueError(f"Coverage guardrails missing: {sorted(required_coverage-set(coverage))}")
+    if coverage.get("exclusive_partition_valid") is not True: raise ValueError("Exclusive semantic partition is invalid.")
+    if coverage.get("strict_source_alpha"):
+        if coverage["transparent_semantic_leak_count"]!=0 or coverage["semantic_pixels_outside_foreground_count"]!=0: raise ValueError("Strict alpha semantic leak detected.")
+        if coverage["clustered_background_pixel_count"]!=0: raise ValueError("Background pixels entered color clustering.")
+        if coverage["transparent_background_recall"]!=1.0 or coverage["foreground_domain_match_ratio"]!=1.0: raise ValueError("Strict alpha domain does not match source alpha.")
     return True
 
 

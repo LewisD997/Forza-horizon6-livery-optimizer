@@ -47,7 +47,7 @@ def _parser():
     p=argparse.ArgumentParser(description="Generate conservative semantic region proposals and layer attribution.")
     p.add_argument("--case"); p.add_argument("--image"); p.add_argument("--geometry"); p.add_argument("--plan"); p.add_argument("--visible-contribution-report"); p.add_argument("--output-dir")
     p.add_argument("--backend",choices=["auto","heuristic-anime"],default="auto"); p.add_argument("--region-hints")
-    p.add_argument("--foreground-alpha-threshold",type=int,default=8); p.add_argument("--color-clusters",type=int,default=12); p.add_argument("--minimum-region-area",type=int,default=12)
+    p.add_argument("--foreground-alpha-threshold",type=int,default=0); p.add_argument("--color-clusters",type=int,default=12); p.add_argument("--minimum-region-area",type=int,default=12)
     p.add_argument("--unknown-warning-threshold",type=float,default=.65); p.add_argument("--attribution-overlap-threshold",type=float,default=.12); p.add_argument("--ambiguity-margin",type=float,default=.08)
     p.add_argument("--visibility-resolution-scale",type=float,default=1.0); p.add_argument("--debug-shape-indexes"); p.add_argument("--overwrite",action="store_true"); p.add_argument("--skip-layer-attribution",action="store_true"); p.add_argument("--no-visualizations",action="store_true"); return p
 

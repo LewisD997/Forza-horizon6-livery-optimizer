@@ -22,6 +22,13 @@ def validate_outputs(regions,attribution,geometry):
         if region_map.size!=(width,height): raise ValueError("Semantic map size mismatch.")
         if region_map.mode!="P": raise ValueError("Semantic map must store exact numeric label IDs in palette mode.")
         if set(np.unique(np.asarray(region_map)))-set(REGION_IDS.values()): raise ValueError("Semantic map contains invalid label IDs.")
+        coverage=regions["coverage"]
+        if coverage.get("strict_source_alpha"):
+            source_alpha=np.asarray(Image.open(regions["image_path"]).convert("RGBA"))[:,:,3]
+            threshold=int((regions.get("diagnostics",{}).get("foreground_extraction") or {}).get("alpha_background_threshold",0))
+            transparent=source_alpha<=threshold; label_values=np.asarray(region_map)
+            if np.any(label_values[transparent]!=REGION_IDS["background"]): raise ValueError("Semantic foreground label exists in a source-transparent pixel.")
+            if int(transparent.sum())!=coverage["source_transparent_pixel_count"]: raise ValueError("Source transparent count mismatch.")
     if attribution["shape_count"]!=len(geometry.get("shapes",[])): raise ValueError("Shape count mismatch.")
     if len(attribution["layers"])!=len(geometry["shapes"]): raise ValueError("Missing attribution records.")
     for index,item in enumerate(attribution["layers"]):

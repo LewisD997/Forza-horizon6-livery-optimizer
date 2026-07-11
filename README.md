@@ -187,6 +187,8 @@ python scripts/validate_semantic_region_map.py --regions cases/case_0001/semanti
 
 Semantic labels are proposals with confidence, not guaranteed truth. Unknown foreground is preserved, and original Paint Studio geometry is never overwritten. See `docs/semantic_region_map_and_layer_attribution.md`.
 
+v0.7.0.1 fixes a real-case transparent-background leakage regression. Source alpha is now an immutable semantic boundary, transparent RGB is excluded from clustering, strict validation requires zero semantic leaks, and eye proposals use conservative component and aggregate limits. Semantic output remains experimental until visually reviewed. See `docs/semantic_foreground_guardrails.md`.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.
