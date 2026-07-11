@@ -543,6 +543,17 @@ python scripts/validate_safe_cleanup_apply_preview.py --report cases/case_0001/s
 
 The output is `preview_safe_cleanup_geometry.json`, never official optimized geometry. FLO can currently create non-destructive preview geometry and cleanup proposals, but official automatic visual optimization is not implemented. Original Paint Studio geometry is never overwritten.
 
+## Experimental Semantic Regions
+
+The v0.6 safe-cleanup foundation is complete. v0.7 proposes coarse anime semantic regions and attributes visible layer contribution to them:
+
+```bash
+python scripts/generate_semantic_region_map.py --case cases/case_0001 --backend heuristic-anime --overwrite
+python scripts/validate_semantic_region_map.py --regions cases/case_0001/semantic_regions/semantic_regions.json --attribution cases/case_0001/semantic_regions/layer_region_attribution.json --geometry cases/case_0001/paintstudio_geometry.json
+```
+
+These are confidence-bearing proposals, not guaranteed segmentation. Weak pixels remain `foreground_unknown`; geometry is never modified. See `docs/semantic_region_map_and_layer_attribution.md`.
+
 Full notes:
 
 ```text

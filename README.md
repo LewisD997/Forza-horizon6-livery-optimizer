@@ -178,6 +178,15 @@ python scripts/validate_safe_cleanup_apply_preview.py --report cases/case_0001/s
 
 FLO can currently create non-destructive preview geometry and cleanup proposals. Official automatic visual optimization is not yet implemented, and original Paint Studio geometry is never overwritten. See `docs/safe_cleanup_apply_preview.md`.
 
+The v0.6 safe-cleanup foundation is complete. v0.7 adds experimental semantic region proposals and occlusion-aware layer attribution:
+
+```bash
+python scripts/generate_semantic_region_map.py --case cases/case_0001 --backend heuristic-anime --overwrite
+python scripts/validate_semantic_region_map.py --regions cases/case_0001/semantic_regions/semantic_regions.json --attribution cases/case_0001/semantic_regions/layer_region_attribution.json --geometry cases/case_0001/paintstudio_geometry.json
+```
+
+Semantic labels are proposals with confidence, not guaranteed truth. Unknown foreground is preserved, and original Paint Studio geometry is never overwritten. See `docs/semantic_region_map_and_layer_attribution.md`.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.

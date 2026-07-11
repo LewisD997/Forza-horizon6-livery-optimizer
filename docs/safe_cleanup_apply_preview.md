@@ -16,3 +16,5 @@ python scripts/validate_safe_cleanup_apply_preview.py --report cases/case_0001/s
 The renderer produces before, after, diff, and evidence images. When the source image is available, FLO also compares both previews against it using the existing resize alignment. An unavailable reference comparison is recorded without failing the workflow.
 
 `preview_safe_cleanup_geometry.json` is preview-only and must not be treated as approved output. FLO never overwrites the original Paint Studio geometry. v0.6.13 closes the v0.6 safe-cleanup foundation; the next stage is v0.7.0 Semantic Region Map and Layer Attribution.
+
+v0.7.0 now begins that separate experimental analysis stage. Its semantic regions carry confidence and unknown handling and do not authorize cleanup or modify the preview apply workflow.
