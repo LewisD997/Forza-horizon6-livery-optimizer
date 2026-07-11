@@ -30,10 +30,23 @@ def validate_outputs(regions,attribution,geometry):
             if np.any(label_values[transparent]!=REGION_IDS["background"]): raise ValueError("Semantic foreground label exists in a source-transparent pixel.")
             if int(transparent.sum())!=coverage["source_transparent_pixel_count"]: raise ValueError("Source transparent count mismatch.")
     if attribution["shape_count"]!=len(geometry.get("shapes",[])): raise ValueError("Shape count mismatch.")
+    diagnostics=regions.get("diagnostics") or {}; topology=diagnostics.get("component_topology") or {}; stripes=diagnostics.get("semantic_stripes") or {}; face=diagnostics.get("face_core") or {}
+    if topology.get("component_count")!=len(topology.get("nodes",[])): raise ValueError("Component topology is invalid.")
+    if stripes.get("hard_horizontal_semantic_thresholds") not in ([],None): raise ValueError("Hard horizontal semantic thresholds are forbidden.")
+    if face.get("exists") and (not face.get("bbox") or face.get("confidence",0)<.45): raise ValueError("Face core lacks sufficient confidence or bbox.")
+    output_dir=Path(regions["outputs"]["region_map"]).parent if (regions.get("outputs") or {}).get("region_map") else None
+    if output_dir:
+        stripe_path=output_dir/"semantic_stripe_diagnostics.json"; alignment_path=output_dir/"semantic_attribution_alignment_audit.json"; background_path=output_dir/"background_attribution_review.json"
+        for path in (stripe_path,alignment_path,background_path):
+            if not path.exists(): raise ValueError(f"Required semantic audit output missing: {path.name}")
+        alignment=_load(alignment_path); background_review=_load(background_path)
+        if alignment.get("alignment_confidence") not in {"high","medium","low"}: raise ValueError("Invalid alignment audit confidence.")
+        if background_review.get("base_shape_excluded") is not True: raise ValueError("Background review must exclude base shape.")
     if len(attribution["layers"])!=len(geometry["shapes"]): raise ValueError("Missing attribution records.")
     for index,item in enumerate(attribution["layers"]):
         if item["shape_index"]!=index or item["shape_uid"]!=make_shape_uid(geometry["shapes"][index],index): raise ValueError("Shape identity mismatch.")
-        if any(label not in SENSITIVE_LABELS for label in item["sensitive_labels"]): raise ValueError("Invalid sensitive label.")
+        if any(label not in SENSITIVE_LABELS|{"face_core"} for label in item["sensitive_labels"]): raise ValueError("Invalid sensitive label.")
+        if item.get("sensitive_region") and not item.get("sensitive_triggers"): raise ValueError("Sensitive attribution lacks trigger metadata.")
         if item["attribution_status"]=="fully_occluded" and item["estimated_visible_alpha_area"]>1e-4: raise ValueError("Fully occluded shape has visible area.")
         if sum(item.get("all_region_overlaps",{}).values())>1.001: raise ValueError("Region overlaps are inconsistent.")
     return True

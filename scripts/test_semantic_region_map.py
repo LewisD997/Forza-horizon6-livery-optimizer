@@ -8,16 +8,19 @@ from PIL import Image,ImageDraw
 ROOT=Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
 from engine.analyzer.layer_region_attribution import attribute_layers_to_semantic_regions
+from engine.analyzer.layer_region_attribution import _attribute
 from engine.analyzer.shape_visibility_analyzer import analyze_shape_visibility
+from engine.analyzer.semantic_attribution_alignment_audit import audit_semantic_attribution_alignment
 from engine.vision.semantic_regions.region_backend import generate_semantic_region_proposal
 from engine.vision.semantic_regions.region_postprocess import validate_partition
+from engine.vision.semantic_regions.stripe_diagnostics import analyze_semantic_stripes
 from scripts.generate_semantic_region_map import run_from_args
 from scripts.validate_semantic_region_map import validate_outputs
 
 
 def main():
     test_foreground_and_determinism(); test_strict_alpha_guardrails(); test_eye_guardrails()
-    test_visibility_and_attribution(); test_cli_validation(); test_corrupted_map_fails()
+    test_visibility_and_attribution(); test_stripe_and_sensitive_guardrails(); test_alignment_warning(); test_cli_validation(); test_corrupted_map_fails()
     print("Semantic region map tests passed."); return 0
 
 
@@ -73,6 +76,24 @@ def test_visibility_and_attribution():
     assert attribution["layers"][2]["secondary_regions"]
     assert attribution["layers"][2]["sensitive_region"] is True
     assert attribution["layers"][3]["attribution_status"]=="fully_occluded" and not attribution["layers"][3]["sensitive_region"]
+
+
+def test_stripe_and_sensitive_guardrails():
+    label_map=np.zeros((30,40),dtype=np.uint8); domain=np.ones((30,40),dtype=bool); label_map[:10]=1; label_map[10:20]=2; label_map[20:]=6
+    stripes=analyze_semantic_stripes(label_map,domain,.5); assert stripes["suspicious_horizontal_transition_count"]==2 and stripes["affected_rows"]==[10,20]
+    visible=np.ones((10,10),dtype=np.float32); visibility={"total_alpha_area":100,"estimated_visible_alpha_area":100,"estimated_occlusion_ratio":0}
+    masks={label:np.zeros((10,10),dtype=np.float32) for label in ("background","hair","face_skin","eyes","mouth","body_skin","clothing","foreground_unknown","outline_edge","face_core")}
+    masks["clothing"][:]=1; masks["face_core"][0,0]=1
+    tiny=_attribute({"type":1},1,visible,visibility,masks,.05,.08); assert not tiny["sensitive_region"]
+    masks["eyes"][0:2,0:5]=1; meaningful=_attribute({"type":1},1,visible,visibility,masks,.05,.08); assert meaningful["sensitive_region"] and meaningful["sensitive_triggers"]
+    masks["eyes"][:]=0; masks["outline_edge"][0:2,:]=1; outline=_attribute({"type":1},1,visible,visibility,masks,.05,.08); assert not outline["sensitive_region"] and outline["sensitive_boundary"]
+
+
+def test_alignment_warning():
+    with tempfile.TemporaryDirectory() as temp:
+        source=Path(temp)/"source.png"; Image.new("RGBA",(40,30),(0,0,0,0)).save(source)
+        attribution={"layers":[]}; audit=audit_semantic_attribution_alignment(_geometry(),str(source),attribution,{"geometry_render_size":{"width":20,"height":15}})
+        assert audit["alignment_method"]=="explicit_scale_to_source" and audit["warnings"]
 
 
 def test_cli_validation():

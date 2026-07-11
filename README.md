@@ -189,6 +189,8 @@ Semantic labels are proposals with confidence, not guaranteed truth. Unknown for
 
 v0.7.0.1 fixes a real-case transparent-background leakage regression. Source alpha is now an immutable semantic boundary, transparent RGB is excluded from clustering, strict validation requires zero semantic leaks, and eye proposals use conservative component and aggregate limits. Semantic output remains experimental until visually reviewed. See `docs/semantic_foreground_guardrails.md`.
 
+v0.7.0.2 replaces hard horizontal semantic bands with component topology, adds a compact face core, conservative sensitive triggers, stripe diagnostics, geometry/source alignment audit, and background-attribution review. It remains experimental and analysis-only. See `docs/semantic_topology_and_attribution_alignment.md`.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.

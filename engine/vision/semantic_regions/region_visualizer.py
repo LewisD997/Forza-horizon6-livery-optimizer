@@ -12,6 +12,7 @@ def write_region_visualizations(result, output_dir, attribution=None, overwrite=
     paths={"region_map":output/"semantic_region_map.png","overlay":output/"semantic_region_overlay.png","confidence":output/"semantic_region_confidence.png",
         "review_sheet":output/"semantic_region_review_sheet.png","attribution_overlay":output/"layer_attribution_overlay.png",
         "alpha_guardrail":output/"semantic_alpha_guardrail.png"}
+    paths["stripe_overlay"]=output/"semantic_stripe_overlay.png"
     region_image=Image.fromarray(label_map.astype("uint8"),"P")
     palette=[]
     for index in range(256):
@@ -25,10 +26,15 @@ def write_region_visualizations(result, output_dir, attribution=None, overwrite=
         if label not in {"background","outline_edge"}: leaks|=mask&~domain
     guard=np.zeros((*domain.shape,3),dtype=np.uint8); guard[domain]=(185,185,185); guard[leaks]=(255,0,40)
     guard_image=Image.fromarray(guard,"RGB"); _save(guard_image,paths["alpha_guardrail"],overwrite)
+    stripe=source.convert("RGB").copy(); stripe_draw=ImageDraw.Draw(stripe)
+    for row in (result.get("diagnostics",{}).get("semantic_stripes") or {}).get("affected_rows",[]): stripe_draw.line((0,row,stripe.width-1,row),fill=(255,0,40),width=2)
+    _save(stripe,paths["stripe_overlay"],overwrite)
     mask_dir=output/"region_masks"; mask_dir.mkdir(exist_ok=True)
     mask_paths={}
     for label,mask in masks.items():
         path=mask_dir/f"{label}.png"; _save(Image.fromarray(mask.astype("uint8")*255,"L"),path,overwrite); mask_paths[label]=str(path)
+    face_core=Image.fromarray(np.asarray(result.get("_face_core",np.zeros_like(domain)),dtype="uint8")*255,"L")
+    _save(face_core,output/"face_core.png",overwrite); mask_paths["face_core"]=str(output/"face_core.png")
     review=_review_sheet(source,region_image.convert("RGB"),overlay,conf,guard_image,result,masks,domain); _save(review,paths["review_sheet"],overwrite)
     if attribution is not None: _save(_attribution_overlay(overlay,attribution),paths["attribution_overlay"],overwrite)
     return {key:str(value) for key,value in paths.items() if value.exists()},mask_paths

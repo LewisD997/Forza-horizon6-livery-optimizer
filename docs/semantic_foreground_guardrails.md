@@ -26,3 +26,5 @@ Eye proposals are searched only inside a confident face and face-relative eye ba
 `semantic_alpha_guardrail.png` renders valid foreground in gray, background in dark color, and any illegal leak in bright warning red. A correct strict-alpha output has no red pixels. The review sheet includes this view, foreground/background counts, unknown ratio, eye ratio, and warnings.
 
 These guardrails establish domain correctness, not semantic truth. Hair, face, eyes, and clothing remain experimental proposals and still require visual review.
+
+v0.7.0.2 builds on this immutable alpha domain with component topology. Graph propagation and alignment auditing do not relax any strict-alpha invariant.

@@ -8,6 +8,7 @@ if str(ROOT) not in sys.path: sys.path.insert(0,str(ROOT))
 
 from engine.analyzer.layer_region_attribution import attribute_layers_to_semantic_regions
 from engine.analyzer.shape_visibility_analyzer import analyze_shape_visibility
+from engine.analyzer.semantic_attribution_alignment_audit import audit_semantic_attribution_alignment,write_background_attribution_review
 from engine.output.semantic_region_writer import write_layer_region_attribution_csv,write_layer_region_attribution_json,write_region_layer_summary,write_semantic_regions_json
 from engine.vision.semantic_regions.region_backend import generate_semantic_region_proposal
 from engine.vision.semantic_regions.region_visualizer import write_region_visualizations
@@ -38,8 +39,13 @@ def run_from_args(args):
     outputs=_output_paths(paths["output"]); write_semantic_regions_json(regions,outputs["regions"],args.overwrite)
     _write_json(regions["diagnostics"],outputs["diagnostics"],args.overwrite)
     if attribution:
+        alignment=audit_semantic_attribution_alignment(geometry,str(paths["image"]),attribution)
+        _write_json(alignment,str(paths["output"]/"semantic_attribution_alignment_audit.json"),args.overwrite)
+        write_background_attribution_review(attribution,str(paths["image"]),paths["output"],args.overwrite)
+        if alignment["warnings"]: attribution["status"]="completed_with_warnings"; attribution["warnings"].extend(alignment["warnings"])
         write_layer_region_attribution_json(attribution,outputs["attribution"],args.overwrite); write_layer_region_attribution_csv(attribution,outputs["csv"],args.overwrite)
         write_region_layer_summary(attribution["region_summaries"],outputs["summary_json"],args.overwrite); _write_summary(attribution,outputs["summary_txt"],args.overwrite)
+    _write_json(regions["diagnostics"]["semantic_stripes"],str(paths["output"]/"semantic_stripe_diagnostics.json"),args.overwrite)
     return {"regions":regions,"attribution":attribution,"outputs":outputs,"visual_paths":visual_paths}
 
 

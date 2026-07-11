@@ -12,6 +12,7 @@ def attribute_layers_to_semantic_regions(geometry,semantic_region_result,visibil
     options=options or {}; original=copy.deepcopy(geometry); scale=float(options.get("visibility_resolution_scale",1.0))
     masks=semantic_region_result["_masks"]; height,width=next(iter(masks.values())).shape
     scaled_masks={label:_resize_mask(mask,scale) for label,mask in masks.items()}; visibility_by={item["shape_index"]:item for item in visibility_result["shapes"]}
+    scaled_masks["face_core"]=_resize_mask(semantic_region_result.get("_face_core",np.zeros((height,width),dtype=bool)),scale)
     threshold=float(options.get("attribution_overlap_threshold",.12)); margin=float(options.get("ambiguity_margin",.08)); layers=[]
     for index,mask,visible in iter_visible_shape_masks(geometry,width,height,scale):
         shape=geometry["shapes"][index]; visibility=visibility_by[index]; entry=_attribute(shape,index,visible,visibility,scaled_masks,threshold,margin); layers.append(entry)
@@ -34,15 +35,23 @@ def _attribute(shape,index,visible,visibility,masks,threshold,margin):
     if visible is None: return {**base,"primary_region":"unknown","primary_region_overlap_ratio":0.0,"secondary_regions":[],"all_region_overlaps":{},"outline_overlap_ratio":0.0,"sensitive_region":False,"sensitive_labels":[],"attribution_confidence":0.0,"attribution_status":"unsupported"}
     area=float(visible.sum())
     if area<=1e-5: return {**base,"primary_region":"unknown","primary_region_overlap_ratio":0.0,"secondary_regions":[],"all_region_overlaps":{},"outline_overlap_ratio":0.0,"sensitive_region":False,"sensitive_labels":[],"attribution_confidence":1.0,"attribution_status":"fully_occluded"}
-    overlaps={label:float((visible*mask).sum()/area) for label,mask in masks.items() if label!="outline_edge"}
+    overlaps={label:float((visible*mask).sum()/area) for label,mask in masks.items() if label not in {"outline_edge","face_core"}}
     ranked=sorted(overlaps.items(),key=lambda item:(-item[1],item[0])); primary,ratio=ranked[0]
     if ratio<threshold: primary="foreground_unknown" if overlaps.get("foreground_unknown",0)>0 else "unknown"; status="unknown"
     else: status="ambiguous" if len(ranked)>1 and ratio-ranked[1][1]<margin else "assigned"
     secondary=[{"label":label,"overlap_ratio":round(value,6)} for label,value in ranked[1:] if value>=threshold]
-    outline=float((visible*masks.get("outline_edge",False)).sum()/area); sensitive=[label for label in SENSITIVE_LABELS if (outline if label=="outline_edge" else overlaps.get(label,0))>=threshold]
+    outline=float((visible*masks.get("outline_edge",False)).sum()/area); face_core=float((visible*masks.get("face_core",False)).sum()/area)
+    thresholds={"eyes":.03,"face_core":.16,"mouth":.08,"outline_edge":.15}; trigger_values={"eyes":overlaps.get("eyes",0),"face_core":face_core,"mouth":overlaps.get("mouth",0),"outline_edge":outline}
+    triggers=[]
+    for label,value in trigger_values.items():
+        if value>=thresholds[label]: triggers.append({"triggering_label":label,"overlap_ratio":round(value,6),"visible_overlap_area":round(value*area,6),"threshold_used":thresholds[label],"trigger_reason":"primary_eye_region" if label=="eyes" and primary=="eyes" else "meaningful_visible_overlap"})
+    core=[item for item in triggers if item["triggering_label"] in {"eyes","face_core","mouth"}]
+    sensitive=sorted(item["triggering_label"] for item in core)
     return {**base,"primary_region":primary,"primary_region_overlap_ratio":round(ratio,6),"secondary_regions":secondary,
         "all_region_overlaps":{k:round(v,6) for k,v in overlaps.items()},"outline_overlap_ratio":round(outline,6),
-        "sensitive_region":bool(sensitive),"sensitive_labels":sorted(sensitive),"attribution_confidence":round(max(0,min(1,ratio-(ranked[1][1] if len(ranked)>1 else 0)+.25)),6),"attribution_status":status}
+        "sensitive_region":bool(core),"sensitive_labels":sensitive,"sensitive_triggers":triggers,"sensitive_core":bool(core),
+        "sensitive_boundary":any(item["triggering_label"]=="outline_edge" for item in triggers),"sensitive_low_confidence":bool(core) and ratio<.25,
+        "attribution_confidence":round(max(0,min(1,ratio-(ranked[1][1] if len(ranked)>1 else 0)+.25)),6),"attribution_status":status}
 
 
 def _summaries(layers,regions,options):

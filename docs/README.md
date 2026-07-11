@@ -556,6 +556,8 @@ These are confidence-bearing proposals, not guaranteed segmentation. Weak pixels
 
 v0.7.0.1 corrects transparent-background leakage: source alpha is immutable, transparent RGB never enters clustering, post-processing cannot cross the alpha domain, and strict-alpha validation requires zero leaks. Eye detection also uses conservative size, compactness, face-overlap, and aggregate limits. See `docs/semantic_foreground_guardrails.md`.
 
+v0.7.0.2 removes hard row slicing. It uses a foreground component graph for face core, hair, skin, and clothing proposals; records stripe diagnostics and conservative sensitive triggers; and audits geometry/source alignment plus background-primary shapes. See `docs/semantic_topology_and_attribution_alignment.md`.
+
 Full notes:
 
 ```text

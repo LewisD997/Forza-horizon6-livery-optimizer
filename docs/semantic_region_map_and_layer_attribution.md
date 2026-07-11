@@ -34,3 +34,9 @@ The heuristic backend is not guaranteed truth. Color similarity, complex backgro
 Source alpha is now an immutable semantic domain boundary. Alpha-background pixels and their arbitrary RGB values are excluded from clustering, and no morphology, hint, or post-processing step may cross outside source foreground. Strict-alpha validation requires zero transparent leaks, perfect transparent background recall, and exact foreground-domain agreement.
 
 Eye proposals now use per-component and aggregate area, compactness, face overlap, relative position, local contrast, aspect ratio, and at-most-two-candidate guardrails. Uncertain pixels remain face skin or foreground unknown. See `semantic_foreground_guardrails.md`.
+
+## v0.7.0.2 Topology And Alignment
+
+Hard row-band classification has been replaced by a foreground component graph. Face skin derives from a compact face core; hair and clothing propagate from topology and color-continuity seeds. Stripe diagnostics detect broad horizontal transitions.
+
+Layer attribution now audits geometry-to-source alignment, records conservative eye/face-core/mouth sensitive triggers, treats outline as a boundary warning, and generates a dedicated background-attribution review. See `semantic_topology_and_attribution_alignment.md`.
