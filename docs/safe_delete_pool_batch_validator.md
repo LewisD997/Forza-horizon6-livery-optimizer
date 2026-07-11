@@ -127,10 +127,10 @@ Key fields:
 - `skipped_candidates`: candidates blocked by safety rules.
 - `safety`: confirms sandbox/proposal-only behavior.
 
-## Why No Official Optimized Geometry Yet
+## Preview Apply And Official Output
 
-v0.6.12 is still a validator.
+v0.6.12 is a validator. v0.6.13 can revalidate its proposal and apply it to reversible preview-only geometry.
 
-It prepares a future final apply step, but does not write `optimized_geometry.json`, does not touch Paint Studio source, and does not modify injection logic.
+Neither stage writes official `optimized_geometry.json`, touches Paint Studio source, or modifies injection logic. See `safe_cleanup_apply_preview.md`.
 
-The intended next step is a separate final-apply workflow that reads an approved proposal and writes official cleanup output only after explicit human approval.
+The next development stage is v0.7.0 Semantic Region Map and Layer Attribution.

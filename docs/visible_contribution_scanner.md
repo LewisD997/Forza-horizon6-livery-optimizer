@@ -137,3 +137,5 @@ This is non-destructive:
 - Paint Studio source and injection logic are untouched
 
 The scanner prepares FLO for semantic region analysis and a future cleanup proposal layer. It does not approve cleanup by itself.
+
+v0.6.13 uses this scanner's exact `change_id`, `shape_uid`, contribution class, and recommended action when revalidating a safe-delete proposal for preview-only application. Zero/negligible contribution remains evidence rather than official cleanup approval.

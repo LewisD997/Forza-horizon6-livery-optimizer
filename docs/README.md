@@ -534,10 +534,25 @@ cases/case_0001/safe_delete_validation/
 
 The validator removes only `safe_delete_pool` shapes in a sandbox copy, writes a proposal, and does not write official `optimized_geometry.json`.
 
+Apply that proposal to a reversible preview copy:
+
+```bash
+python scripts/apply_safe_cleanup_preview.py --case cases/case_0001 --overwrite --write-rollback-preview
+python scripts/validate_safe_cleanup_apply_preview.py --report cases/case_0001/safe_cleanup_apply_preview/safe_cleanup_apply_preview_report.json --original cases/case_0001/paintstudio_geometry.json
+```
+
+The output is `preview_safe_cleanup_geometry.json`, never official optimized geometry. FLO can currently create non-destructive preview geometry and cleanup proposals, but official automatic visual optimization is not implemented. Original Paint Studio geometry is never overwritten.
+
 Full notes:
 
 ```text
 docs/safe_delete_pool_batch_validator.md
+```
+
+Preview apply notes:
+
+```text
+docs/safe_cleanup_apply_preview.md
 ```
 
 ## Renderer Compatibility Diagnostic

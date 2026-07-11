@@ -169,6 +169,15 @@ python scripts/validate_safe_delete_pool_report.py --report cases/case_0001/safe
 
 This writes `cases/case_0001/safe_delete_validation/`, including `safe_delete_pool_validation_report.json`, `safe_delete_cleanup_proposal.json`, before/after previews, diff, impact report, and evidence sheet. It is proposal-only and does not write official `optimized_geometry.json`.
 
+Apply a validated proposal to preview-only geometry:
+
+```bash
+python scripts/apply_safe_cleanup_preview.py --case cases/case_0001 --overwrite --write-rollback-preview
+python scripts/validate_safe_cleanup_apply_preview.py --report cases/case_0001/safe_cleanup_apply_preview/safe_cleanup_apply_preview_report.json --original cases/case_0001/paintstudio_geometry.json
+```
+
+FLO can currently create non-destructive preview geometry and cleanup proposals. Official automatic visual optimization is not yet implemented, and original Paint Studio geometry is never overwritten. See `docs/safe_cleanup_apply_preview.md`.
+
 ## Renderer Compatibility Diagnostic
 
 Real Paint Studio `geometry.json` files may not yet render faithfully in FLO. If FLO preview is far from Paint Studio preview, visual diff and anime artifact analysis should not be trusted for cleanup decisions.
